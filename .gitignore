@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Exclude Build directory
+build/
+
+# Exclude vscode directory
+.vscode/
