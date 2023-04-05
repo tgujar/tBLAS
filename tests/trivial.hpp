@@ -1,3 +1,6 @@
+#ifndef TRIVIAL_HPP
+#define TRIVIAL_HPP
+
 #include <vector>
 
 namespace tBLAS_test
@@ -10,9 +13,9 @@ namespace tBLAS_test
     class Trivial
     {
     public:
-        std::vector<std::vector<T>> transpose(const std::vector<std::vector<T>> &A)
+        static std::vector<std::vector<T>> transpose(const std::vector<std::vector<T>> &A)
         {
-            std::vector<std::vector<T>> B(A[0].size(), std::vector<int>(A.size()));
+            std::vector<std::vector<T>> B(A[0].size(), std::vector<T>(A.size()));
             for (int i = 0; i < A.size(); ++i)
             {
                 for (int j = 0; j < A[0].size(); ++j)
@@ -22,9 +25,9 @@ namespace tBLAS_test
             }
             return B;
         }
-        std::vector<std::vector<T>> matmul(const std::vector<std::vector<T>> &A, const std::vector<std::vector<T>> &B)
+        static std::vector<std::vector<T>> matmul(const std::vector<std::vector<T>> &A, const std::vector<std::vector<T>> &B)
         {
-            std::vector<std::vector<T>> C(A.size(), std::vector<int>(B[0].size()));
+            std::vector<std::vector<T>> C(A.size(), std::vector<T>(B[0].size()));
 
             for (int i = 0; i < A.size(); ++i)
             {
@@ -40,4 +43,6 @@ namespace tBLAS_test
         }
     };
 
-}
+}; // namespace tBLAS_test
+
+#endif // TRIVIAL_HPP

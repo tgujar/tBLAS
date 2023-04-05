@@ -8,7 +8,7 @@ find_package(Catch2 3 REQUIRED)
 add_executable(tests tests_transpose.cpp tests_matmul.cpp)
 
 # Link against the main library and Catch2
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(tests PRIVATE tBLAS Catch2::Catch2WithMain)
 
 # Add tests to CTest
 include(CTest)
