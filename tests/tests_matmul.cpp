@@ -1,4 +1,5 @@
-#include <vector>
+#include <array>
+#include <typeinfo>
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch_test_macros.hpp>
@@ -7,43 +8,72 @@
 #include <catch2/generators/catch_generators_random.hpp>
 
 #include <tBLAS/blas.hpp>
+
 #include "trivial.hpp"
 #include "utils.hpp"
 
-TEST_CASE("Matmul trivial", "[matmul]")
-{
+// TEST_CASE("Matmul trivial", "[matmul]")
+// {
+//     SECTION("Square matrices")
+//     {
+//         using namespace std;
+//         array<array<int, 2>, 2> A = {{{1, 2}, {3, 4}}};
+//         array<array<int, 2>, 2> B = {{{1, 2}, {3, 4}}};
+//         REQUIRE(tBLAS_test::Trivial::matmul(A, B) == array<array<int, 2>, 2>{{{7, 10}, {15, 22}}});
+//     }
+//     SECTION("Rectangular matrices")
+//     {
+//         using namespace std;
+//         array<array<int, 3>, 2> A = {{{1, 2, 3}, {4, 5, 6}}};
+//         array<array<int, 2>, 3> B = {{{1, 2}, {3, 4}, {5, 6}}};
+//         REQUIRE(tBLAS_test::Trivial::matmul(A, B) == array<array<int, 2>, 2>{{{22, 28}, {49, 64}}});
+//     }
+// }
 
-    SECTION("Square matrices")
-    {
-        using namespace std;
-        vector<vector<int>> A = {{1, 2}, {3, 4}};
-        vector<vector<int>> B = {{1, 2}, {3, 4}};
-        REQUIRE(tBLAS_test::Trivial<int>::matmul(A, B) == vector<vector<int>>{{7, 10}, {15, 22}});
-    }
-    SECTION("Rectangular matrices")
-    {
-        using namespace std;
-        vector<vector<int>> A = {{1, 2, 3}, {4, 5, 6}};
-        vector<vector<int>> B = {{1, 2}, {3, 4}, {5, 6}};
-        REQUIRE(tBLAS_test::Trivial<int>::matmul(A, B) == vector<vector<int>>{{22, 28}, {49, 64}});
-    }
-}
+// TEMPLATE_TEST_CASE("Matmul Square Random Int", "[matmul]", int)
+// {
+//     using namespace std;
+//     for (int i = 0; i < 10; i++)
+//     {
+//         size_t m = GENERATE(take(1, random(10, 50)));
 
-TEMPLATE_TEST_CASE("Matmul Square Random", "[matmul]", int, float, double)
+//         array<array<TestType, 2>, 2> A = gen_rand_matrix<TestType, m, m>();
+//         array<array<TestType, 2>, 2> B = gen_rand_matrix<TestType, m, m>();
+
+//         REQUIRE(tBLAS_test::Trivial::matmul(A, B) == tBLAS::BLAS::matmul(A, B));
+//     }
+// }
+
+TEMPLATE_TEST_CASE("Matmul Square Random", "[matmul]", int)
 {
     using namespace std;
     for (int i = 0; i < 10; i++)
     {
         int m = GENERATE(take(1, random(10, 50)));
 
-        vector<vector<TestType>> A = genRandMatrix<TestType>(m, m);
-        vector<vector<TestType>> B = genRandMatrix<TestType>(m, m);
+        vector<vector<TestType>> A = gen_rand_matrix<TestType>(m, m);
+        vector<vector<TestType>> B = gen_rand_matrix<TestType>(m, m);
 
-        REQUIRE(tBLAS_test::Trivial<TestType>::matmul(A, B) == tBLAS::BLAS<TestType>::matmul(A, B));
+        REQUIRE(tBLAS_test::Trivial::matmul(A, B) == tBLAS::BLAS::matmul(A, B));
     }
 }
 
-TEMPLATE_TEST_CASE("Matmul Rectangle Random", "[matmul]", int, float, double)
+TEMPLATE_TEST_CASE("Matmul Square Random FP", "[matmul]", float, double)
+{
+    using namespace std;
+
+    for (int i = 0; i < 10; i++)
+    {
+        int m = GENERATE(take(1, random(10, 50)));
+
+        vector<vector<TestType>> A = gen_rand_matrix<TestType>(m, m);
+        vector<vector<TestType>> B = gen_rand_matrix<TestType>(m, m);
+
+        compare_FP_2D(tBLAS_test::Trivial::matmul(A, B), tBLAS::BLAS::matmul(A, B));
+    }
+}
+
+TEMPLATE_TEST_CASE("Matmul Rectangle Random", "[matmul]", int)
 {
     using namespace std;
     for (int i = 0; i < 10; i++)
@@ -52,9 +82,26 @@ TEMPLATE_TEST_CASE("Matmul Rectangle Random", "[matmul]", int, float, double)
         int n = GENERATE(take(1, random(10, 50)));
         int p = GENERATE(take(1, random(10, 50)));
 
-        vector<vector<TestType>> A = genRandMatrix<TestType>(m, n);
-        vector<vector<TestType>> B = genRandMatrix<TestType>(n, p);
+        vector<vector<TestType>> A = gen_rand_matrix<TestType>(m, n);
+        vector<vector<TestType>> B = gen_rand_matrix<TestType>(n, p);
 
-        REQUIRE(tBLAS_test::Trivial<TestType>::matmul(A, B) == tBLAS::BLAS<TestType>::matmul(A, B));
+        REQUIRE(tBLAS_test::Trivial::matmul(A, B) == tBLAS::BLAS::matmul(A, B));
+    }
+}
+
+TEMPLATE_TEST_CASE("Matmul Rectangle Random FP", "[matmul]", float, double)
+{
+    using namespace std;
+
+    for (int i = 0; i < 10; i++)
+    {
+        int m = GENERATE(take(1, random(10, 50)));
+        int n = GENERATE(take(1, random(10, 50)));
+        int p = GENERATE(take(1, random(10, 50)));
+
+        vector<vector<TestType>> A = gen_rand_matrix<TestType>(m, n);
+        vector<vector<TestType>> B = gen_rand_matrix<TestType>(n, p);
+
+        compare_FP_2D(tBLAS_test::Trivial::matmul(A, B), tBLAS::BLAS::matmul(A, B));
     }
 }
