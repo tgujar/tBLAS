@@ -14,8 +14,7 @@ TEST_CASE("Matrix Basic", "[matrix]")
 {
     SECTION("Initialization")
     {
-        std::vector<std::vector<int>> vals{{1, 2, 3, 4}, {5, 6, 7, 8}};
-        tBLAS::MatrixXd<int, 2, 4> A(vals);
+        tBLAS::Matrix<int, 2, 4> A{{1, 2, 3, 4}, {5, 6, 7, 8}};
         for (int i = 0; i < 2; i++)
         {
             for (int j = 0; j < 4; j++)
