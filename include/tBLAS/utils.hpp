@@ -67,8 +67,8 @@ namespace tBLAS
 
     template <typename T, std::size_t M, std::size_t K>
     tBLAS::MatrixXd<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS>
-    pack_vertical(typename tBLAS::MatrixXd<T, M, K>::const_iterator &matrix_itr,
-                  typename tBLAS::MatrixXd<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS>::iterator &panel_itr,
+    pack_vertical(typename tBLAS::MatrixXd<T, M, K>::const_iterator matrix_itr,
+                  typename tBLAS::MatrixXd<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS>::iterator panel_itr,
                   const std::pair<size_t, size_t> &panel_dims)
     {
         assert(panel_dims.first <= KERNEL_MR);
@@ -89,8 +89,8 @@ namespace tBLAS
 
     template <typename T, std::size_t K, std::size_t N>
     tBLAS::MatrixXd<T, HORIZONTAL_PANEL_ROWS, HORIZONTAL_PANEL_COLS>
-    pack_horizontal(typename tBLAS::MatrixXd<T, K, N>::const_iterator &matrix_itr,
-                    typename tBLAS::MatrixXd<T, HORIZONTAL_PANEL_ROWS, HORIZONTAL_PANEL_COLS>::iterator &panel_itr,
+    pack_horizontal(typename tBLAS::MatrixXd<T, K, N>::const_iterator matrix_itr,
+                    typename tBLAS::MatrixXd<T, HORIZONTAL_PANEL_ROWS, HORIZONTAL_PANEL_COLS>::iterator panel_itr,
                     const std::pair<size_t, size_t> &panel_dims)
     {
         assert(panel_dims.first <= KERNEL_KC);

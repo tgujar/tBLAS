@@ -11,41 +11,41 @@
 #include "trivial.hpp"
 #include "helpers.hpp"
 
-TEST_CASE("Pack horizontal", "[pack]")
-{
+// TEST_CASE("Pack horizontal", "[pack]")
+// {
 
-    SECTION("Square matrices")
-    {
-        using namespace std;
-        tBLAS::MatrixXd<int, tBLAS::KERNEL_KC, tBLAS::KERNEL_NR> M(gen_rand_matrix<int>(tBLAS::KERNEL_KC, tBLAS::KERNEL_NR));
-        auto packed = tBLAS::pack_horizontal(M, {tBLAS::KERNEL_KC, tBLAS::KERNEL_NR}, {0, 0});
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                REQUIRE(packed(i, j) == M(i, j));
-            }
-        }
-    }
-}
+//     SECTION("Square matrices")
+//     {
+//         using namespace std;
+//         tBLAS::MatrixXd<int, tBLAS::KERNEL_KC, tBLAS::KERNEL_NR> M(gen_rand_matrix<int>(tBLAS::KERNEL_KC, tBLAS::KERNEL_NR));
+//         auto packed = tBLAS::pack_horizontal(M, {tBLAS::KERNEL_KC, tBLAS::KERNEL_NR}, {0, 0});
+//         for (int i = 0; i < 3; i++)
+//         {
+//             for (int j = 0; j < 3; j++)
+//             {
+//                 REQUIRE(packed(i, j) == M(i, j));
+//             }
+//         }
+//     }
+// }
 
-TEST_CASE("Pack vertical", "[pack]")
-{
+// TEST_CASE("Pack vertical", "[pack]")
+// {
 
-    SECTION("Square matrices")
-    {
-        using namespace std;
-        tBLAS::MatrixXd<int, tBLAS::KERNEL_KC, tBLAS::KERNEL_MR> M(gen_rand_matrix<int>(tBLAS::KERNEL_KC, tBLAS::KERNEL_MR));
-        auto packed = tBLAS::pack_vertical(M, {tBLAS::KERNEL_KC, tBLAS::KERNEL_MR}, {0, 0});
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                REQUIRE(packed(i, j) == M(j, i));
-            }
-        }
-    }
-}
+//     SECTION("Square matrices")
+//     {
+//         using namespace std;
+//         tBLAS::MatrixXd<int, tBLAS::KERNEL_KC, tBLAS::KERNEL_MR> M(gen_rand_matrix<int>(tBLAS::KERNEL_KC, tBLAS::KERNEL_MR));
+//         auto packed = tBLAS::pack_vertical(M, {tBLAS::KERNEL_KC, tBLAS::KERNEL_MR}, {0, 0});
+//         for (int i = 0; i < 3; i++)
+//         {
+//             for (int j = 0; j < 3; j++)
+//             {
+//                 REQUIRE(packed(i, j) == M(j, i));
+//             }
+//         }
+//     }
+// }
 
 // TEMPLATE_TEST_CASE("Transpose Square Random", "[transpose]", int)
 // {

@@ -1,4 +1,6 @@
 #include <array>
+#include <iostream>
+#include <sstream>
 #include <typeinfo>
 
 #define CATCH_CONFIG_MAIN
@@ -104,4 +106,17 @@ TEMPLATE_TEST_CASE("Matmul Rectangle Random FP", "[matmul]", float, double)
 
         compare_FP_2D(tBLAS_test::Trivial::matmul(A, B), tBLAS::BLAS::matmul(A, B));
     }
+}
+
+TEST_CASE("Matmul first go", "[matmul]")
+{
+    using namespace std;
+    std::vector<std::vector<int>> vals{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    std::vector<std::vector<int>> id{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    tBLAS::MatrixXd<int, 3, 3> A(vals);
+    tBLAS::MatrixXd<int, 3, 3> B(id);
+    tBLAS::MatrixXd<int, 3, 3> C = tBLAS::BLAS::matmul<int, 3, 3, 3>(A, B);
+    stringstream ss;
+    ss << C << endl;
+    WARN(ss.str());
 }

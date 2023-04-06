@@ -66,13 +66,13 @@ namespace tBLAS
     };
 
     template <typename T, size_t M, size_t N>
-    std::ostream &operator<<(std::ostream &os, const MatrixXd<T, M, N> &M)
+    std::ostream &operator<<(std::ostream &os, const MatrixXd<T, M, N> &A)
     {
-        for (int i = 0; i < M.size(); i++)
+        for (int i = 0; i < M; i++)
         {
-            for (int j = 0; j < M[0].size(); j++)
+            for (int j = 0; j < N; j++)
             {
-                os << M(i, j) << " ";
+                os << A(i, j) << " ";
             }
             os << "\n";
         }
