@@ -22,7 +22,7 @@ std::array<std::array<T, N>, M> gen_rand_matrix()
 }
 
 template <typename T>
-std::vector<std::vector<T>> gen_rand_matrix(int m, int n)
+std::vector<std::vector<T>> gen_rand_matrix(const size_t m, const size_t n)
 {
     std::vector<std::vector<T>> R(m, std::vector<T>(n));
     for (int i = 0; i < m; ++i)

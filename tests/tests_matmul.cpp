@@ -10,7 +10,7 @@
 #include <tBLAS/blas.hpp>
 
 #include "trivial.hpp"
-#include "utils.hpp"
+#include "helpers.hpp"
 
 // TEST_CASE("Matmul trivial", "[matmul]")
 // {
