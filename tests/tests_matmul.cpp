@@ -112,10 +112,11 @@ TEST_CASE("Matmul first go", "[matmul]")
 {
     using namespace std;
     std::vector<std::vector<int>> vals{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-    std::vector<std::vector<int>> id{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    // std::vector<std::vector<int>> id{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    std::vector<std::vector<int>> other{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
     tBLAS::MatrixXd<int, 3, 3> A(vals);
-    tBLAS::MatrixXd<int, 3, 3> B(id);
-    tBLAS::MatrixXd<int, 3, 3> C = tBLAS::BLAS::matmul<int, 3, 3, 3>(A, B);
+    tBLAS::MatrixXd<int, 3, 3> B(other);
+    tBLAS::MatrixXd<int, 3, 3> C = tBLAS::BLAS::matmul(A, B);
     stringstream ss;
     ss << C << endl;
     WARN(ss.str());

@@ -143,7 +143,7 @@ namespace tBLAS
                     size_t nc = std::min(N - i_nc, KERNEL_NC);
                     for (size_t i_nr = 0; i_nr < nc; i_nr += KERNEL_NR)
                     {
-                        pack_horizontal<T, K, N>(B.cbegin() + i_kc + K * (i_nc + i_nr), packB.begin() + i_nr * kc, {kc, std::min(nc - i_nr, KERNEL_NR)});
+                        pack_horizontal<T, K, N>(B.cbegin() + i_kc * K + i_nc + i_nr, packB.begin() + i_nr * kc, {kc, std::min(nc - i_nr, KERNEL_NR)});
                     }
 
                     BLAS::macro_kernel_gemm<T, M, N>(mc, nc, kc, packA, packB, C.begin() + i_mc * N + i_nc);
