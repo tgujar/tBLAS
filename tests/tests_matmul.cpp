@@ -94,6 +94,25 @@ TEST_CASE("Matmul INT Square Identity", "[matmul]")
     compare_INT_2D(tBLAS_test::Trivial::matmul(v_A, v_B), tBLAS::BLAS::matmul(A, B).to_vector());
 }
 
+TEST_CASE("Matmul INT Dyanmic Square Identity", "[matmul]")
+{
+    using namespace std;
+    for (int i = 0; i < 10; i++)
+    {
+        size_t m = GENERATE(take(1, random(10, 50)));
+        size_t n = GENERATE(take(1, random(10, 50)));
+        size_t p = GENERATE(take(1, random(10, 50)));
+
+        vector<vector<int>> A(gen_rand_matrix<int>(m, n));
+        vector<vector<int>> B(gen_rand_matrix<int>(n, p));
+
+        tBLAS::MatrixX<int> tA(A);
+        tBLAS::MatrixX<int> tB(B);
+
+        compare_INT_2D(tBLAS_test::Trivial::matmul(A, B), tBLAS::BLAS::matmul(tA, tB).to_vector());
+    }
+}
+
 TEST_CASE("Matmul INT Rectangle Identity", "[matmul]")
 {
     using namespace std;

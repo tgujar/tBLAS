@@ -5,7 +5,7 @@ project(tBLAS_tests)
 find_package(Catch2 3 REQUIRED)
 
 # Create an executable for the tests
-add_executable(tests tests_transpose.cpp tests_matmul.cpp tests_matrix.cpp tests_utils.cpp)
+add_executable(tests tests_transpose.cpp tests_matmul.cpp tests_matrix.cpp)
 
 # Link against the main library and Catch2
 target_link_libraries(tests PRIVATE tBLAS Catch2::Catch2WithMain)

@@ -35,6 +35,20 @@ static std::vector<std::vector<T>> gen_rand_matrix(const size_t m, const size_t 
     return R;
 }
 
+// template <typename T>
+// static tBLAS::MatrixX<T> gen_rand_matrix(const size_t m, const size_t n)
+// {
+//     tBLAS::MatrixX<T> R(m, n);
+//     for (int i = 0; i < m; ++i)
+//     {
+//         for (int j = 0; j < n; j++)
+//         {
+//             R(i, j) = GENERATE(take(1, random(static_cast<T>(-100), static_cast<T>(100))));
+//         }
+//     }
+//     return R;
+// }
+
 // template <typename T, std::size_t M, std::size_t N>
 // void compare_FP_2D(const std::array<std::array<T, N>, M> &exp, const std::array<std::array<T, N>, M> &ip)
 // {

@@ -18,5 +18,7 @@ namespace tBLAS
     const size_t HORIZONTAL_PANEL_ROWS = KERNEL_KC;
     const size_t HORIZONTAL_PANEL_COLS = (KERNEL_NC / KERNEL_NR + 1) * KERNEL_NR;
     const size_t HORIZONTAL_PANEL_SIZE = HORIZONTAL_PANEL_ROWS * HORIZONTAL_PANEL_COLS;
+
+    const size_t Dynamic = 0;
 }
 #endif // TBLAS_CONSTANTS_H

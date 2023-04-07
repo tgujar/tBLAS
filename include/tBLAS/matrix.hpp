@@ -1,5 +1,5 @@
-#ifndef TBLAS_MATRIX_H
-#define TBLAS_MATRIX_H
+#ifndef TBLAS_Matrix_H
+#define TBLAS_Matrix_H
 
 #include <cstddef>
 #include <array>
@@ -7,6 +7,8 @@
 #include <vector>
 #include <initializer_list>
 #include <cassert>
+
+#include "constants.hpp"
 namespace tBLAS
 {
 
@@ -22,19 +24,23 @@ namespace tBLAS
         using iterator = typename std::vector<T>::iterator;
         using const_iterator = typename std::vector<T>::const_iterator;
 
-        Matrix() : m_data(M * N, 0), m_rows(M), m_cols(N) {} // allocate on construct, could be better
-        ~Matrix() = default;
-        Matrix(const Matrix &other) : m_data(other.get_data()) {}
-        Matrix(std::initializer_list<std::initializer_list<T>> lst) : m_rows(M), m_cols(N) // kinda sketchy
+        Matrix() : m_data(M * N, 0), m_rows(M), m_cols(N) {}
+        virtual ~Matrix() = default;
+        Matrix(const Matrix &other) : m_data(other.get_data()), m_rows(other.rows()), m_cols(other.cols()) {}
+        Matrix(std::initializer_list<std::initializer_list<T>> lst)
         {
             if (lst.size() != M || lst.begin()->size() != N)
             {
-                throw std::invalid_argument("Matrix initializer list has incorrect dimensions");
+                throw std::invalid_argument("Matrix_base initializer list has incorrect dimensions");
             }
-            m_data.reserve(M * N);
+
+            this->m_rows = M;
+            this->m_cols = N;
+            this->m_data.reserve(M * N);
+
             for (auto row : lst)
             {
-                copy(row.begin(), row.end(), back_inserter(m_data));
+                copy(row.begin(), row.end(), back_inserter(this->m_data));
             }
         }
 
@@ -70,10 +76,10 @@ namespace tBLAS
 
         std::vector<std::vector<T>> to_vector() const
         {
-            std::vector<std::vector<T>> A(M, std::vector<T>(N));
-            for (int i = 0; i < M; i++)
+            std::vector<std::vector<T>> A(rows(), std::vector<T>(cols()));
+            for (int i = 0; i < rows(); i++)
             {
-                for (int j = 0; j < N; ++j)
+                for (int j = 0; j < cols(); ++j)
                 {
                     A[i][j] = (*this)(i, j);
                 }
@@ -103,6 +109,50 @@ namespace tBLAS
         }
         return os;
     }
+
+    template <typename T>
+    class MatrixX : public Matrix<T, Dynamic, Dynamic>
+    {
+    public:
+        MatrixX(size_t rows, size_t cols)
+        {
+            this->m_rows = rows;
+            this->m_cols = cols;
+            this->m_data.resize(rows * cols, 0);
+        }
+        MatrixX(std::initializer_list<std::initializer_list<T>> lst)
+        {
+            this->m_rows = lst.size();
+            this->m_cols = lst.begin()->size();
+            this->m_data.reserve(this->m_rows * this->m_cols);
+            for (auto row : lst)
+            {
+                copy(row.begin(), row.end(), back_inserter(this->m_data));
+            }
+        }
+
+        MatrixX(const std::vector<std::vector<T>> &vct)
+        {
+            this->m_rows = vct.size();
+            this->m_cols = vct.begin()->size();
+            this->m_data.reserve(this->m_rows * this->m_cols);
+            for (auto row : vct)
+            {
+                copy(row.begin(), row.end(), back_inserter(this->m_data));
+            }
+        }
+
+        void resize(size_t rows, size_t cols)
+        {
+            this->m_data.resize(rows * cols);
+            if (rows * cols < this->m_rows * this->m_cols)
+            {
+                this->m_data.clear();
+            }
+            this->m_rows = rows;
+            this->m_cols = cols;
+        }
+    };
 
 } // namespace tBLAS
 
