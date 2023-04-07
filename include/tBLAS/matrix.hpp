@@ -16,7 +16,7 @@ namespace tBLAS
     class Matrix
     {
     protected:
-        alignas(64) std::vector<T> m_data;
+        alignas(64) std::vector<T> m_data; // this is somewhat broken in C++11, and might get ignored
         size_t m_rows;
         size_t m_cols;
 
@@ -153,6 +153,20 @@ namespace tBLAS
             this->m_cols = cols;
         }
     };
+
+    template <typename T>
+    std::ostream &operator<<(std::ostream &os, const MatrixX<T> &A)
+    {
+        for (int i = 0; i < A.rows(); i++)
+        {
+            for (int j = 0; j < A.cols(); j++)
+            {
+                os << A(i, j) << " ";
+            }
+            os << "\n";
+        }
+        return os;
+    }
 
 } // namespace tBLAS
 

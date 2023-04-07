@@ -30,10 +30,10 @@ namespace tBLAS
             size_t C_stride);
 
         template <typename T, size_t M, size_t N, size_t K>
-        Matrix<T, M, N> matrix_gemm(const Matrix<T, M, K> &A, const Matrix<T, K, N> &B, Matrix<T, M, N> &C);
+        void matrix_gemm(const Matrix<T, M, K> &A, const Matrix<T, K, N> &B, Matrix<T, M, N> &C);
 
         template <typename T, size_t M, size_t N, size_t K>
-        Matrix<T, M, N> matrix_gemm(const Matrix<T, M, K> &A, const Matrix<T, K, N> &B, Matrix<T, M, N> &C)
+        void matrix_gemm(const Matrix<T, M, K> &A, const Matrix<T, K, N> &B, Matrix<T, M, N> &C)
         {
 
             Matrix<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS> packA;
@@ -73,7 +73,6 @@ namespace tBLAS
                     }
                 }
             }
-            return C;
         }
 
         template <typename T, size_t M, size_t N>
