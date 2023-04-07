@@ -38,7 +38,6 @@ namespace tBLAS_test
     std::vector<std::vector<T>> Trivial::matmul(const std::vector<std::vector<T>> &A, const std::vector<std::vector<T>> &B)
     {
         std::vector<std::vector<T>> C(A.size(), std::vector<T>(B[0].size()));
-
         for (int i = 0; i < A.size(); ++i)
         {
             for (int j = 0; j < B[0].size(); ++j)

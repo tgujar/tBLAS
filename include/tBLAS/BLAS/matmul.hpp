@@ -76,15 +76,17 @@ namespace tBLAS
         }
 
         template <typename T, size_t M, size_t N>
-        void macro_kernel_gemm(
+        inline void macro_kernel_gemm(
             size_t mc, size_t nc, size_t kc,
             const VPANEL<T> &packA,
             const HPANEL<T> &packB,
             typename tBLAS::Matrix<T, M, N>::iterator C_itr,
             size_t C_stride)
         {
+            // #pragma unroll
             for (size_t i = 0; i < mc; i += KERNEL_MR)
             {
+#pragma unroll
                 for (size_t j = 0; j < nc; j += KERNEL_NR)
                 {
                     micro_kernel_gemm<T, M, N>(
@@ -100,7 +102,7 @@ namespace tBLAS
         }
 
         template <typename T, size_t M, size_t N>
-        void micro_kernel_gemm(
+        inline void micro_kernel_gemm(
             size_t k, size_t m, size_t n,
             typename VPANEL<T>::const_iterator a,
             typename HPANEL<T>::const_iterator b,
@@ -109,8 +111,10 @@ namespace tBLAS
         {
             for (size_t l = 0; l < k; l++)
             {
+#pragma unroll
                 for (size_t j = 0; j < n; j++)
                 {
+#pragma unroll
                     for (size_t i = 0; i < m; i++)
                     {
                         *(C_itr + i * C_stride + j) += (*(a + l * m + i)) * (*(b + l * n + j));

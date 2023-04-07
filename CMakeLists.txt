@@ -2,8 +2,10 @@ cmake_minimum_required(VERSION 3.10)
 project(tBLAS VERSION 1.0)
 
 include(GNUInstallDirs)
+
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_CXX_FLAGS "-O3 -ftree-vectorize -funroll-loops")
 
 # Include headers
 include_directories(include)

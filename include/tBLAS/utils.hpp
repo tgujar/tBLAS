@@ -13,13 +13,13 @@ namespace tBLAS
 {
 
     template <typename T, std::size_t M, std::size_t K>
-    void pack_vertical(typename tBLAS::Matrix<T, M, K>::const_iterator matrix_itr,
-                       typename tBLAS::Matrix<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS>::iterator panel_itr,
-                       const std::pair<size_t, size_t> &panel_dims,
-                       size_t stride)
+    static inline void pack_vertical(typename tBLAS::Matrix<T, M, K>::const_iterator matrix_itr,
+                                     typename tBLAS::Matrix<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS>::iterator panel_itr,
+                                     const std::pair<size_t, size_t> &panel_dims,
+                                     size_t stride)
     {
-        assert(panel_dims.first <= KERNEL_MR);
-        assert(panel_dims.second <= KERNEL_KC);
+        // assert(panel_dims.first <= KERNEL_MR);
+        // assert(panel_dims.second <= KERNEL_KC);
 
         for (size_t i_k = 0; i_k < panel_dims.second; ++i_k)
         {
@@ -32,13 +32,13 @@ namespace tBLAS
     }
 
     template <typename T, std::size_t K, std::size_t N>
-    void pack_horizontal(typename tBLAS::Matrix<T, K, N>::const_iterator matrix_itr,
-                         typename tBLAS::Matrix<T, HORIZONTAL_PANEL_ROWS, HORIZONTAL_PANEL_COLS>::iterator panel_itr,
-                         const std::pair<size_t, size_t> &panel_dims,
-                         size_t stride)
+    static inline void pack_horizontal(typename tBLAS::Matrix<T, K, N>::const_iterator matrix_itr,
+                                       typename tBLAS::Matrix<T, HORIZONTAL_PANEL_ROWS, HORIZONTAL_PANEL_COLS>::iterator panel_itr,
+                                       const std::pair<size_t, size_t> &panel_dims,
+                                       size_t stride)
     {
-        assert(panel_dims.first <= KERNEL_KC);
-        assert(panel_dims.second <= KERNEL_NR);
+        // assert(panel_dims.first <= KERNEL_KC);
+        // assert(panel_dims.second <= KERNEL_NR);
 
         for (size_t i_k = 0; i_k < panel_dims.first; ++i_k)
         {
