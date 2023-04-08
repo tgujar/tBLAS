@@ -1,10 +1,9 @@
-#include <vector>
-
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/generators/catch_generators_adapters.hpp>
 #include <catch2/generators/catch_generators_random.hpp>
+#include <vector>
 
 #include <tBLAS/blas.hpp>
 #include <sstream>

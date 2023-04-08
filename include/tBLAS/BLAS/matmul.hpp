@@ -3,6 +3,7 @@
 #include "../constants.hpp"
 #include "../matrix.hpp"
 #include "../utils.hpp"
+#include "../threading/pool.h"
 
 namespace tBLAS
 {
@@ -35,9 +36,9 @@ namespace tBLAS
         template <typename T, size_t M, size_t N, size_t K>
         void matrix_gemm(const Matrix<T, M, K> &A, const Matrix<T, K, N> &B, Matrix<T, M, N> &C)
         {
-
-            Matrix<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS> packA;
-            Matrix<T, HORIZONTAL_PANEL_ROWS, HORIZONTAL_PANEL_COLS> packB;
+            auto &gtp = threading::GlobalThreadPool::get_instance();
+            VPANEL<T> packA;
+            std::vector<HPANEL<T> *> v_packB;
             for (size_t i_mc = 0; i_mc < A.rows(); i_mc += KERNEL_MC)
             {
                 size_t mc = std::min(A.rows() - i_mc, KERNEL_MC);
@@ -54,23 +55,31 @@ namespace tBLAS
 
                     for (size_t i_nc = 0; i_nc < B.cols(); i_nc += KERNEL_NC)
                     {
+                        HPANEL<T> *packB = new HPANEL<T>();
+                        v_packB.push_back(packB);
                         size_t nc = std::min(B.cols() - i_nc, KERNEL_NC);
                         for (size_t i_nr = 0; i_nr < nc; i_nr += KERNEL_NR)
                         {
                             pack_horizontal<T, K, N>(B.cbegin() + i_kc * B.cols() + i_nc + i_nr,
-                                                     packB.begin() + i_nr * kc,
+                                                     (v_packB.back())->begin() + i_nr * kc,
                                                      {kc, std::min(nc - i_nr, KERNEL_NR)},
                                                      B.cols());
                         }
-
-                        macro_kernel_gemm<T, M, N>(mc,
-                                                   nc,
-                                                   kc,
-                                                   packA,
-                                                   packB,
-                                                   C.begin() + i_mc * C.cols() + i_nc,
-                                                   C.cols());
+                        gtp.enqueue([=, &packA, &C]()
+                                    { macro_kernel_gemm<T, M, N>(mc,
+                                                                 nc,
+                                                                 kc,
+                                                                 packA,
+                                                                 *(packB),
+                                                                 C.begin() + i_mc * C.cols() + i_nc,
+                                                                 C.cols()); });
                     }
+                    gtp.sync();
+                    for (auto &packB : v_packB)
+                    {
+                        delete packB;
+                    }
+                    v_packB.clear();
                 }
             }
         }

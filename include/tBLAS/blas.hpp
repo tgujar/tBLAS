@@ -6,7 +6,6 @@
 #include <algorithm>
 #include <cstddef>
 #include "matrix.hpp"
-#include "constants.hpp"
 #include "utils.hpp"
 #include "./BLAS/matmul.hpp"
 #include "./BLAS/transpose.hpp"
@@ -15,6 +14,7 @@ namespace tBLAS
 {
     namespace BLAS
     {
+
         template <typename T, size_t M, size_t K>
         tBLAS::Matrix<T, K, M> transpose(const tBLAS::Matrix<T, M, K> &A);
 
