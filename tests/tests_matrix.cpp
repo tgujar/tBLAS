@@ -10,18 +10,21 @@
 #include "trivial.hpp"
 #include "helpers.hpp"
 
-TEST_CASE("Matrix Basic", "[matrix]")
+namespace tBLAS_test
 {
-    SECTION("Initialization")
+    TEST_CASE("Matrix Basic", "[matrix]")
     {
-        tBLAS::Matrix<int, 2, 4> A{{1, 2, 3, 4}, {5, 6, 7, 8}};
-        for (int i = 0; i < 2; i++)
+        SECTION("Initialization")
         {
-            for (int j = 0; j < 4; j++)
+            tBLAS::Matrix<int, 2, 4> A{{1, 2, 3, 4}, {5, 6, 7, 8}};
+            for (int i = 0; i < 2; i++)
             {
-                INFO(A(i, j));
-                REQUIRE(A(i, j) == (i * 4 + j + 1));
+                for (int j = 0; j < 4; j++)
+                {
+                    INFO(A(i, j));
+                    REQUIRE(A(i, j) == (i * 4 + j + 1));
+                }
             }
         }
     }
-}
+}; // namespace tBLAS_test

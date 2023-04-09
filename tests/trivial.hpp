@@ -7,19 +7,37 @@
 namespace tBLAS_test
 {
 
-    /*
-     * Trivial implementation of matrix transpose and matrix multiplication.
+    /**
+     * @brief Trivial implementation of matrix transpose and multiplication.
+     *
+     * Used to compare benchmark results.
      */
     class Trivial
     {
     public:
+        /**
+         * @brief Transpose a matrix.
+         *
+         * @tparam T The type of the matrix elements.
+         * @param A The matrix to transpose.
+         * @return std::vector<std::vector<T>> The transposed matrix.
+         */
         template <typename T>
         static std::vector<std::vector<T>> transpose(const std::vector<std::vector<T>> &A);
 
+        /**
+         * @brief Multiply two matrices.
+         *
+         * @tparam T The type of the matrix elements.
+         * @param A The first matrix.
+         * @param B The second matrix.
+         * @return std::vector<std::vector<T>> The product of the two matrices.
+         */
         template <typename T>
         static std::vector<std::vector<T>> matmul(const std::vector<std::vector<T>> &A, const std::vector<std::vector<T>> &B);
     };
 
+    /* ----------------------------- Implementation ----------------------------- */
     template <typename T>
     std::vector<std::vector<T>> Trivial::transpose(const std::vector<std::vector<T>> &A)
     {

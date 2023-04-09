@@ -1,6 +1,8 @@
 #ifndef TRANSPOSE_HPP
 #define TRANSPOSE_HPP
 
+#include <memory>
+
 #include "../constants.hpp"
 #include "../matrix.hpp"
 #include "../utils.hpp"
@@ -37,14 +39,12 @@ namespace tBLAS
         {
             auto &gtp = threading::GlobalThreadPool::get_instance();
             Matrix<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS> packA;
-            std::vector<VPANEL<T> *> v_packA;
             for (size_t i_mc = 0; i_mc < A.rows(); i_mc += KERNEL_MC)
             {
                 size_t mc = std::min(A.rows() - i_mc, KERNEL_MC);
                 for (size_t i_kc = 0; i_kc < A.cols(); i_kc += KERNEL_KC)
                 {
-                    VPANEL<T> *packA = new VPANEL<T>();
-                    v_packA.push_back(packA);
+                    auto packA = std::make_shared<VPANEL<T>>();
                     size_t kc = std::min(A.cols() - i_kc, KERNEL_KC);
                     for (size_t i_mr = 0; i_mr < mc; i_mr += KERNEL_MR)
                     {
@@ -54,7 +54,7 @@ namespace tBLAS
                                                {std::min(mc - i_mr, KERNEL_MR), kc},
                                                A.cols());
                     }
-                    gtp.enqueue([=, &packA, &C]()
+                    gtp.enqueue([=, &C]() mutable
                                 { macro_kernel_transpose<T, M, K>(
                                       mc, kc,
                                       *packA,
@@ -62,11 +62,6 @@ namespace tBLAS
                                       C.cols()); });
                 }
                 gtp.sync();
-                for (auto &packA : v_packA)
-                {
-                    delete packA;
-                }
-                v_packA.clear();
             }
         }
 

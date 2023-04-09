@@ -12,11 +12,15 @@ namespace tBLAS
 {
     namespace threading
     {
+        /* ------------------------ ThreadPool Implementation ----------------------- */
         ThreadPool::ThreadPool(unsigned int n) : in_progress(0), terminate_pool(false), jq_cv(), jq_mutex(), threads(), jq()
         {
             unsigned int hw_threads = std::thread::hardware_concurrency();
+
+            // use atleast 4 threads if hardware_concurrency() not available
             num_threads = std::min(hw_threads == 0 ? 4 : hw_threads, n);
             threads.reserve(num_threads);
+
             for (unsigned int i = 0; i < num_threads; i++)
             {
                 threads.push_back(std::thread([this]
@@ -41,7 +45,7 @@ namespace tBLAS
                 jq.push(task);
                 in_progress++;
             }
-            jq_cv.notify_one();
+            jq_cv.notify_one(); // notify one thread to execute the task
         }
 
         void ThreadPool::spin()
@@ -51,8 +55,11 @@ namespace tBLAS
                 std::function<void()> curr_job;
                 {
                     std::unique_lock<std::mutex> lk(jq_mutex);
+
+                    // nothing to do if task queue is empty and pool is not being terminated
                     jq_cv.wait(lk, [this]()
                                { return !jq.empty() || terminate_pool; });
+
                     if (terminate_pool)
                     {
                         return;
@@ -63,9 +70,9 @@ namespace tBLAS
 
                 curr_job();
 
-                if (--in_progress == 0)
+                if (--in_progress == 0) // task completed
                 {
-                    jq_cv.notify_all();
+                    jq_cv.notify_all(); // wake up sync() if its waiting
                 }
             }
         }
@@ -101,6 +108,7 @@ namespace tBLAS
             threads.clear();
         }
 
+        /* ------------------------ GlobalThreadPool Implementation ----------------------- */
         GlobalThreadPool &GlobalThreadPool::get_instance()
         {
             static GlobalThreadPool instance;

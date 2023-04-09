@@ -6,37 +6,38 @@
 
 #include <vector>
 #include <thread>
+#include <atomic>
 
 #include <tBLAS/matrix.hpp>
 #include <tBLAS/threading/pool.h>
 #include "trivial.hpp"
 #include "helpers.hpp"
 
-TEST_CASE("Thread pool", "[matrix]")
+namespace tBLAS_test
 {
-    using namespace std;
-    using namespace tBLAS::threading;
-    SECTION("Initialization")
+    TEST_CASE("Thread pool", "[matrix]")
     {
-        ThreadPool pool(std::thread::hardware_concurrency());
-        INFO("HW threads: " + to_string(std::thread::hardware_concurrency()));
-        REQUIRE(pool.get_num_threads() == std::thread::hardware_concurrency());
-    }
-
-    SECTION("Counter")
-    {
-        ThreadPool pool(std::thread::hardware_concurrency());
-        for (int i = 0; i < 10; i++)
+        using namespace std;
+        using namespace tBLAS::threading;
+        SECTION("Initialization")
         {
+            ThreadPool pool(std::thread::hardware_concurrency());
+            INFO("HW threads: " + to_string(std::thread::hardware_concurrency()));
+            REQUIRE(pool.get_num_threads() == std::thread::hardware_concurrency());
+        }
 
-            for (int i = 0; i < 10; i++)
+        SECTION("Counter")
+        {
+            ThreadPool pool(std::thread::hardware_concurrency());
+            std::atomic<int> counter(0);
+            int iters = 10;
+            for (int i = 0; i < iters; i++)
             {
-                pool.enqueue([i]()
-                             { "Thread" + to_string(i); });
+                pool.enqueue([&counter]()
+                             { counter++; });
             }
             pool.sync();
+            REQUIRE(counter == 10);
         }
-        pool.stop();
-        WARN("okay");
     }
-}
+}; // namespace tBLAS_test
