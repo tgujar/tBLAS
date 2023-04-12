@@ -5,7 +5,7 @@
 
 #include "../../../constants.hpp"
 #include "../../../matrix.hpp"
-#include "../../../utils.hpp"
+#include "../../utils.hpp"
 #include "../../../threading/pool.h"
 
 namespace tBLAS
@@ -24,9 +24,8 @@ namespace tBLAS
          * @brief Cache optimized and multithreaded matrix multiplication. To be used for large matrices.
          *
          * @tparam T The type of the matrix elements.
-         * @tparam M The number of rows of the left matrix.
-         * @tparam N The number of columns of the right matrix.
-         * @tparam K The number of columns of the left matrix and the number of rows of the right matrix.
+         * @tparam D Derived class of MatrixBase in CRTP.
+         * @tparam S Storage class of the matrix in the derived class D
          * @param A The left matrix.
          * @param B The right matrix.
          * @param C The result matrix.
@@ -38,11 +37,12 @@ namespace tBLAS
          * @brief Helper function for matrix_gemm. Computes matrix multiply for a macro kernel of size KERNEL_MC x KERNEL_NC.
          *
          * @tparam T The type of the matrix elements.
-         * @tparam M The number of rows of the left matrix.
-         * @tparam N The number of columns of the right matrix.
-         * @param mc The number of rows of the left matrix.
-         * @param nc The number of columns of the right matrix.
-         * @param kc The number of columns of the left matrix and the number of rows of the right matrix.
+         * @tparam D Derived class of MatrixBase in CRTP
+         * @tparam S Storage class of the matrix in the derived class D
+         * @param mc The number of rows in the left matrix in the current macro kernel <= KERNEL_MC.
+         * @param nc The number of columns in the right matrix in the current macro kernel <= KERNEL_NC.
+         * @param kc The number of columns of the left matrix or the number of rows of the right matrix
+         *           in the current macro kernel <= KERNEL_KC.
          * @param packA The packed left matrix.
          * @param packB The packed right matrix.
          * @param C_itr The iterator to the result matrix.
@@ -60,11 +60,12 @@ namespace tBLAS
          * @brief Helper function for macro_kernel_gemm. Computes matrix multiply for a micro kernel of size KERNEL_MR x KERNEL_NR.
          *
          * @tparam T The type of the matrix elements.
-         * @tparam M The number of rows of the left matrix.
-         * @tparam N The number of columns of the right matrix.
-         * @param k The number of columns of the left matrix and the number of rows of the right matrix.
-         * @param m The number of rows of the left matrix.
-         * @param n The number of columns of the right matrix.
+         * @tparam D Derived class of MatrixBase in CRTP
+         * @tparam S Storage class of the matrix in the derived class D
+         * @param k The number of columns of the left matrix and the number of rows of the right matrix
+         *          in the current micro kernel <= KERNEL_KR.
+         * @param m The number of rows of the left matrix in the current micro kernel <= KERNEL_MR.
+         * @param n The number of columns of the right matrix in the current micro kerel <= KERNEL_NR.
          * @param a The iterator to the left matrix.
          * @param b The iterator to the right matrix.
          * @param C_itr The iterator to the result matrix.

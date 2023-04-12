@@ -5,7 +5,7 @@
 
 #include "../../../constants.hpp"
 #include "../../../matrix.hpp"
-#include "../../../utils.hpp"
+#include "../../utils.hpp"
 #include "../../../threading/pool.h"
 
 namespace tBLAS

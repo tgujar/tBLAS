@@ -5,7 +5,7 @@
 
 #include "../../../constants.hpp"
 #include "../../../matrix.hpp"
-#include "../../../utils.hpp"
+#include "../../utils.hpp"
 
 namespace tBLAS
 {
@@ -17,6 +17,18 @@ namespace tBLAS
             using xl_txp_VPANEL = Matrix<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS>;
         }
 
+        /**
+         * @brief Helper function for macro_kernel_transpose. Computes matrix transpose for a micro kernel of size KERNEL_MR x KERNEL_KR.
+         *
+         * @tparam T The type of the matrix elements.
+         * @tparam D Derived class of MatrixBase in CRTP
+         * @tparam S Storage class of the matrix in the derived class D
+         * @param k The number of colums in the current micro kernel <= KERNEL_KR.
+         * @param m The number of rows in the current micor kernel <= KERNEL_MR.
+         * @param a The iterator to the left matrix.
+         * @param C_itr The iterator to the result matrix.
+         * @param C_stride Number of columns of the result matrix.
+         */
         template <typename T, typename D, typename S>
         void micro_kernel_transpose(
             size_t k, size_t m,
@@ -24,6 +36,18 @@ namespace tBLAS
             typename tBLAS::MatrixBase<T, D, S>::iterator C_itr,
             size_t C_stride);
 
+        /**
+         * @brief Helper function for xl_txp. Computes matrix transpose for a macro kernel of size KERNEL_MC x KERNEL_KC.
+         *
+         * @tparam T The type of the matrix elements.
+         * @tparam D Derived class of MatrixBase in CRTP
+         * @tparam S Storage class of the matrix in the derived class D
+         * @param mc The number of rows in the current macro kernel <= KERNEL_MC.
+         * @param kc The number of columns in the current macro kernel <= KERNEL_KC.
+         * @param packA The packed left matrix.
+         * @param C_itr The iterator to the result matrix.
+         * @param C_stride Number of columns of the result matrix.
+         */
         template <typename T, typename D, typename S>
         void macro_kernel_transpose(
             size_t mc, size_t kc,
@@ -31,17 +55,23 @@ namespace tBLAS
             typename tBLAS::MatrixBase<T, D, S>::iterator C_itr,
             size_t C_stride);
 
+        /**
+         * @brief Cache optimized and multithreaded matrix transpose. To be used for large matrices.
+         *
+         * @tparam T The type of the matrix elements.
+         * @tparam D Derived class of MatrixBase in CRTP.
+         * @tparam S Storage class of the matrix in the derived class D
+         * @param A The left matrix.
+         * @param C The result matrix.
+         */
         template <typename T, typename D, typename S>
         void xl_txp(const MatrixBase<T, D, S> &A, MatrixBase<T, D, S> &C);
 
-        // template <typename T, size_t M, size_t K>
-        // void simple_transpose(const Matrix<T, M, K> &A, Matrix<T, K, M> &C);
-
+        /* ----------------------------- Implementation ----------------------------- */
         template <typename T, typename D, typename S>
         void xl_txp(const MatrixBase<T, D, S> &A, MatrixBase<T, D, S> &C)
         {
             auto &gtp = threading::GlobalThreadPool::get_instance();
-            Matrix<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS> packA;
             for (size_t i_mc = 0; i_mc < A.rows(); i_mc += KERNEL_MC)
             {
                 size_t mc = std::min(A.rows() - i_mc, KERNEL_MC);

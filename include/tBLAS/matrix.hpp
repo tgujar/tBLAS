@@ -26,6 +26,13 @@ namespace tBLAS
         using iterator = typename Storage::iterator;
         using const_iterator = typename Storage::const_iterator;
 
+        /**
+         * @brief Access the element at position (i,j) in the derived matrix class
+         *
+         * @param i Row index
+         * @param j Column index
+         * @return T& Reference to the element
+         */
         T &operator()(size_t i, size_t j)
         {
             return (*static_cast<Derived *>(this))(i, j);
@@ -45,18 +52,35 @@ namespace tBLAS
     };
 
     /* -------------------------------- Interface ------------------------------- */
+
+    /**
+     * @brief Matrix class with fixed size
+     *
+     * To be used for small matrices. Memory is allocated on the stack.
+     *
+     * @tparam T Type of the elements
+     * @tparam M Number of rows
+     * @tparam N Number of columns
+     */
     template <typename T, size_t M, size_t N>
     class Matrix : public MatrixBase<T, Matrix<T, M, N>, std::array<T, M * N>>
     {
     private:
         // alignas is somewhat broken in C++11 and might get ignored
-        alignas(64) std::array<T, M * N> m_data;
-        size_t m_rows;
-        size_t m_cols;
+        alignas(64) std::array<T, M * N> m_data; /**< Storage for matrix elements*/
+        size_t m_rows;                           /**< Number of rows*/
+        size_t m_cols;                           /**< Number of cols*/
 
         friend std::ostream &operator<<(std::ostream &os, const Matrix<T, M, N> &p);
 
     protected:
+        /**
+         * @brief Check if the given indices don't cause overflow
+         *
+         * @param m Number of rows
+         * @param n Number of columns
+         * @return bool
+         */
         bool is_bounded(size_t m, size_t n);
 
     public:
@@ -67,12 +91,20 @@ namespace tBLAS
         Matrix(std::initializer_list<std::initializer_list<T>> lst);
         Matrix(const std::array<std::array<T, N>, M> &arr);
 
+        virtual ~Matrix() = default;
+
         Matrix &operator=(const Matrix &other);
         Matrix &operator=(Matrix &&other);
+
+        /**
+         * @brief Access the element at position (i,j)
+         *
+         * @param i row index
+         * @param j column index
+         * @return T& Reference to the element
+         */
         T &operator()(size_t i, size_t j);
         const T &operator()(size_t i, size_t j) const;
-
-        virtual ~Matrix() = default;
 
         inline size_t rows() const noexcept;
         inline size_t cols() const noexcept;
@@ -94,6 +126,13 @@ namespace tBLAS
         friend std::ostream &operator<<(std::ostream &os, const MatrixX<T> &p);
 
     protected:
+        /**
+         * @brief Check if the given indices don't cause overflow
+         *
+         * @param m Number of rows
+         * @param n Number of columns
+         * @return bool
+         */
         bool is_bounded(size_t m, size_t n);
 
     public:
@@ -109,6 +148,14 @@ namespace tBLAS
 
         MatrixX &operator=(const MatrixX &other);
         MatrixX &operator=(MatrixX &&other);
+
+        /**
+         * @brief Access the element at position (i,j)
+         *
+         * @param i row index
+         * @param j column index
+         * @return T& Reference to the element
+         */
         T &operator()(size_t i, size_t j);
         const T &operator()(size_t i, size_t j) const;
 
@@ -122,6 +169,18 @@ namespace tBLAS
 
         std::vector<std::vector<T>> to_vector() const;
 
+        /**
+         * @brief Resize the matrix to the given dimensions
+         *
+         * This simply increases the size of the matrix and does not gurantee that
+         * new values follow the same layout as in the old matrix.
+         *
+         * @note If the new number of dimensions is smaller than the old one, the
+         * values will be zeroed out.
+         *
+         * @param rows Number of rows
+         * @param cols Number of columns
+         */
         void resize(size_t rows, size_t cols);
     };
 
@@ -146,6 +205,21 @@ namespace tBLAS
 
         int j = 0;
         for (auto row = lst.begin(); row != lst.end(); row++, j += N)
+        {
+            std::copy(row->begin(), row->end(), m_data.begin() + j);
+        }
+    }
+
+    template <typename T, size_t M, size_t N>
+    Matrix<T, M, N>::Matrix(const std::array<std::array<T, N>, M> &arr)
+    {
+        if (arr.size() != M || arr.begin()->size() != N)
+        {
+            throw std::invalid_argument("Matrix_base initializer list has incorrect dimensions");
+        }
+
+        int j = 0;
+        for (auto row = arr.begin(); row != arr.end(); row++, j += N)
         {
             std::copy(row->begin(), row->end(), m_data.begin() + j);
         }
@@ -280,6 +354,22 @@ namespace tBLAS
     inline size_t MatrixX<T>::rows() const noexcept { return m_rows; }
     template <typename T>
     inline size_t MatrixX<T>::cols() const noexcept { return m_cols; }
+
+    template <typename T>
+    void MatrixX<T>::resize(size_t rows, size_t cols)
+    {
+        if (!is_bounded(rows, cols))
+        {
+            throw std::overflow_error("Matrix dimensions are too large");
+        }
+        this->m_data.resize(rows * cols);
+        if (rows * cols < this->m_rows * this->m_cols)
+        {
+            this->m_data.clear();
+        }
+        this->m_rows = rows;
+        this->m_cols = cols;
+    }
 
     template <typename T>
     std::vector<std::vector<T>> MatrixX<T>::to_vector() const

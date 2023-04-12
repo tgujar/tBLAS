@@ -35,6 +35,8 @@ namespace tBLAS
             case transpose_kernel::xl:
                 xl_txp(A, C);
                 break;
+            default:
+                throw std::runtime_error("kernel not implemented!");
             }
         }
     }; // namespace BLAS
