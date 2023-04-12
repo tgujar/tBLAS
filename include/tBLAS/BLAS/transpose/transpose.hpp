@@ -17,25 +17,28 @@ namespace tBLAS
         template <typename T>
         using HPANEL = Matrix<T, HORIZONTAL_PANEL_ROWS, HORIZONTAL_PANEL_COLS>;
 
-        template <typename T, typename D, typename S>
+        template <typename T, size_t M, size_t K>
         void micro_kernel_transpose(
             size_t k, size_t m,
             typename VPANEL<T>::const_iterator a,
-            typename tBLAS::MatrixBase<T, D, S>::iterator C_itr,
+            typename tBLAS::Matrix<T, K, M>::iterator C_itr,
             size_t C_stride);
 
-        template <typename T, typename D, typename S>
+        template <typename T, size_t M, size_t K>
         void macro_kernel_transpose(
             size_t mc, size_t kc,
             const VPANEL<T> &packA,
-            typename tBLAS::MatrixBase<T, D, S>::iterator C_itr,
+            typename tBLAS::Matrix<T, K, M>::iterator C_itr,
             size_t C_stride);
 
-        template <typename T, typename D, typename S>
-        void matrix_transpose(const MatrixBase<T, D, S> &A, MatrixBase<T, D, S> &C);
+        template <typename T, size_t M, size_t K>
+        void matrix_transpose(const Matrix<T, M, K> &A, Matrix<T, K, M> &C);
 
-        template <typename T, typename D, typename S>
-        void matrix_transpose(const MatrixBase<T, D, S> &A, MatrixBase<T, D, S> &C)
+        template <typename T, size_t M, size_t K>
+        void simple_transpose(const Matrix<T, M, K> &A, Matrix<T, K, M> &C);
+
+        template <typename T, size_t M, size_t K>
+        void matrix_transpose(const Matrix<T, M, K> &A, Matrix<T, K, M> &C)
         {
             auto &gtp = threading::GlobalThreadPool::get_instance();
             Matrix<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS> packA;
@@ -49,13 +52,13 @@ namespace tBLAS
                     for (size_t i_mr = 0; i_mr < mc; i_mr += KERNEL_MR)
                     {
 
-                        pack_vertical<T, D, S>(A.cbegin() + i_kc + A.cols() * (i_mc + i_mr),
+                        pack_vertical<T, M, K>(A.cbegin() + i_kc + A.cols() * (i_mc + i_mr),
                                                packA->begin() + i_mr * kc,
                                                {std::min(mc - i_mr, KERNEL_MR), kc},
                                                A.cols());
                     }
-                    gtp.enqueue([=, &C]()
-                                { macro_kernel_transpose<T, D, S>(
+                    gtp.enqueue([=, &C]() mutable
+                                { macro_kernel_transpose<T, M, K>(
                                       mc, kc,
                                       *packA,
                                       C.begin() + i_mc + C.cols() * i_kc,
@@ -65,16 +68,16 @@ namespace tBLAS
             }
         }
 
-        template <typename T, typename D, typename S>
+        template <typename T, size_t M, size_t K>
         void macro_kernel_transpose(
             size_t mc, size_t kc,
             const VPANEL<T> &packA,
-            typename tBLAS::MatrixBase<T, D, S>::iterator C_itr,
+            typename tBLAS::Matrix<T, K, M>::iterator C_itr,
             size_t C_stride)
         {
             for (size_t i = 0; i < mc; i += KERNEL_MR)
             {
-                micro_kernel_transpose<T, D, S>(
+                micro_kernel_transpose<T, M, K>(
                     kc,
                     std::min(mc - i, KERNEL_MR),
                     packA.cbegin() + i * kc,
@@ -83,11 +86,11 @@ namespace tBLAS
             }
         }
 
-        template <typename T, typename D, typename S>
+        template <typename T, size_t M, size_t K>
         void micro_kernel_transpose(
             size_t k, size_t m,
             typename VPANEL<T>::const_iterator a,
-            typename tBLAS::MatrixBase<T, D, S>::iterator C_itr,
+            typename tBLAS::Matrix<T, K, M>::iterator C_itr,
             size_t C_stride)
         {
             for (size_t l = 0; l < k; l++)
@@ -98,6 +101,12 @@ namespace tBLAS
                 }
             }
         }
+
+        // template <typename T, size_t M, size_t K>
+        // void simple_transpose(const Matrix<T, M, K> &A, Matrix<T, K, M> &C){
+
+        // }
+
     };
 }; // namespace tBLAS
 #endif

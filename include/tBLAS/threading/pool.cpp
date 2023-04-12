@@ -109,13 +109,14 @@ namespace tBLAS
         }
 
         /* ------------------------ GlobalThreadPool Implementation ----------------------- */
+
+        GlobalThreadPool::GlobalThreadPool() : ThreadPool(std::thread::hardware_concurrency()) {}
+
         GlobalThreadPool &GlobalThreadPool::get_instance()
         {
             static GlobalThreadPool instance;
             return instance;
         }
-
-        GlobalThreadPool::GlobalThreadPool() : ThreadPool(std::thread::hardware_concurrency()) {}
 
     }; // namespace threading
 };     // namespace tBLAS

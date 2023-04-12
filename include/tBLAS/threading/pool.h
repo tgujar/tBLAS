@@ -14,12 +14,17 @@ namespace tBLAS
 {
     namespace threading
     {
-        /**
-         * @brief A thread pool implementation.
-         *
-         */
         class ThreadPool
         {
+        private:
+            unsigned int num_threads;              /**< the number of threads in the pool */
+            std::atomic<unsigned int> in_progress; /**< the number of jobs being executed or waiting to be executed */
+            bool terminate_pool;                   /**< flag to indicate that the pool should be terminated */
+            std::condition_variable jq_cv;         /**< condition variable to notify threads of new jobs / pool termination */
+            std::mutex jq_mutex;                   /**< mutex to make job queue thread-safe */
+            std::vector<std::thread> threads;      /**< vector of threads in the pool */
+            std::queue<std::function<void()>> jq;  /**< job queue */
+
         public:
             /**
              * @brief Construct a new Thread Pool object with n threads.
@@ -31,6 +36,10 @@ namespace tBLAS
              */
             ThreadPool(unsigned int n);
 
+            /**
+             * @brief Destroy the Thread Pool object
+             * Follows RAII, calls stop() on destruction.
+             */
             virtual ~ThreadPool();
 
             /**
@@ -75,16 +84,15 @@ namespace tBLAS
             bool busy();
 
         private:
-            unsigned int num_threads;              /**< the number of threads in the pool */
-            std::atomic<unsigned int> in_progress; /**< the number of jobs being executed or waiting to be executed */
-            bool terminate_pool;                   /**< flag to indicate that the pool should be terminated */
-            std::condition_variable jq_cv;         /**< condition variable to notify threads of new jobs / pool termination */
-            std::mutex jq_mutex;                   /**< mutex to make job queue thread-safe */
-            std::vector<std::thread> threads;      /**< vector of threads in the pool */
-            std::queue<std::function<void()>> jq;  /**< job queue */
-
+            /**
+             * @brief Creates a thread and waits for jobs to be executed.
+             *
+             */
             void spin();
-        };
+
+        }; // class ThreadPool
+
+        /* ------------------------------------------------------------------------------ */
 
         /**
          * @brief A global thread pool.
@@ -118,7 +126,7 @@ namespace tBLAS
              * The number of threads in the thread pool are equal to the number of hardware threads.
              */
             GlobalThreadPool();
-        };
+        }; // class GlobalThreadPool
 
     }; // namespace threading
 } // namespace tBLAS

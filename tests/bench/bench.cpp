@@ -14,150 +14,187 @@
 #include "../helpers.hpp"
 
 const std::array<int, 9> powers_of_2 = {2, 4, 8, 16, 32, 64, 128, 256, 512};
-const std::array<int, 2> large_powers_of_2 = {512, 1024};
+const std::array<int, 2> large_powers_of_2 = {2048, 4096};
 const std::array<int, 5> primes = {31, 127, 257, 509, 1021};
 
-TEST_CASE("Trivial Transpose", "[trivial][transpose][bench]")
+namespace tBLAS_test
 {
-    using namespace std;
 
-    SECTION("Powers of 2")
+    TEST_CASE("Trivial Transpose", "[trivial][transpose][bench]")
     {
-        for (int i = 0; i < powers_of_2.size(); i++)
+        using namespace std;
+
+        SECTION("Powers of 2")
         {
-            size_t m = powers_of_2[i];
-            vector<vector<double>> A(gen_rand_matrix<double>(m, m));
-            stringstream test_title;
-            test_title << "[" << m << "x" << m << "]";
-            BENCHMARK(test_title.str())
+            for (int i = 0; i < powers_of_2.size(); i++)
             {
-                return tBLAS_test::Trivial::transpose(A);
-            };
+                size_t m = powers_of_2[i];
+                vector<vector<double>> A(gen_rand_matrix<double>(m, m));
+                stringstream test_title;
+                test_title << "[" << m << "x" << m << "]";
+                BENCHMARK(test_title.str())
+                {
+                    return tBLAS_test::Trivial::transpose(A);
+                };
+            }
+        }
+
+        SECTION("Large Powers of 2")
+        {
+            for (int i = 0; i < large_powers_of_2.size(); i++)
+            {
+                size_t m = large_powers_of_2[i];
+                vector<vector<double>> A(gen_rand_matrix<double>(m, m));
+                stringstream test_title;
+                test_title << "[" << m << "x" << m << "]";
+                BENCHMARK(test_title.str())
+                {
+                    return tBLAS_test::Trivial::transpose(A);
+                };
+            }
+        }
+
+        SECTION("Primes")
+        {
+            for (int i = 0; i < primes.size(); i++)
+            {
+                size_t m = primes[i];
+                vector<vector<double>> A(gen_rand_matrix<double>(m, m));
+                stringstream test_title;
+                test_title << "[" << m << "x" << m << "]";
+                BENCHMARK(test_title.str())
+                {
+                    return tBLAS_test::Trivial::transpose(A);
+                };
+            }
         }
     }
 
-    SECTION("Large Powers of 2")
+    TEST_CASE("tBLAS Transpose", "[tBLAS][transpose][bench]")
     {
-        for (int i = 0; i < large_powers_of_2.size(); i++)
+        using namespace std;
+        SECTION("Powers of 2")
         {
-            size_t m = large_powers_of_2[i];
-            vector<vector<double>> A(gen_rand_matrix<double>(m, m));
-            stringstream test_title;
-            test_title << "[" << m << "x" << m << "]";
-            BENCHMARK(test_title.str())
+            for (int i = 0; i < powers_of_2.size(); i++)
             {
-                return tBLAS_test::Trivial::transpose(A);
-            };
+                size_t m = powers_of_2[i];
+                vector<vector<double>> A(gen_rand_matrix<double>(m, m));
+                tBLAS::MatrixX<double> tA(A);
+                stringstream test_title;
+                test_title << "[" << m << "x" << m << "]";
+                BENCHMARK(test_title.str())
+                {
+                    return tBLAS::BLAS::transpose(tA);
+                };
+            }
+        }
+
+        SECTION("Large Powers of 2")
+        {
+            for (int i = 0; i < large_powers_of_2.size(); i++)
+            {
+                size_t m = large_powers_of_2[i];
+                vector<vector<double>> A(gen_rand_matrix<double>(m, m));
+                tBLAS::MatrixX<double> tA(A);
+                stringstream test_title;
+                test_title << "[" << m << "x" << m << "]";
+                BENCHMARK(test_title.str())
+                {
+                    return tBLAS::BLAS::transpose(tA);
+                };
+            }
+        }
+
+        SECTION("Primes")
+        {
+            for (int i = 0; i < primes.size(); i++)
+            {
+                size_t m = primes[i];
+                vector<vector<double>> A(gen_rand_matrix<double>(m, m));
+                tBLAS::MatrixX<double> tA(A);
+                stringstream test_title;
+                test_title << "[" << m << "x" << m << "]";
+                BENCHMARK(test_title.str())
+                {
+                    return tBLAS::BLAS::transpose(tA);
+                };
+            }
         }
     }
 
-    SECTION("Primes")
+    TEST_CASE("Trivial Matmul", "[trivial][matmul][bench]")
     {
-        for (int i = 0; i < primes.size(); i++)
-        {
-            size_t m = primes[i];
-            vector<vector<double>> A(gen_rand_matrix<double>(m, m));
-            stringstream test_title;
-            test_title << "[" << m << "x" << m << "]";
-            BENCHMARK(test_title.str())
-            {
-                return tBLAS_test::Trivial::transpose(A);
-            };
-        }
-    }
-}
+        using namespace std;
 
-TEST_CASE("tBLAS Transpose", "[tBLAS][transpose][bench]")
-{
-    using namespace std;
-    SECTION("Powers of 2")
-    {
-        for (int i = 0; i < powers_of_2.size(); i++)
+        SECTION("Powers of 2")
         {
-            size_t m = powers_of_2[i];
-            vector<vector<double>> A(gen_rand_matrix<double>(m, m));
-            tBLAS::MatrixX<double> tA(A);
-            stringstream test_title;
-            test_title << "[" << m << "x" << m << "]";
-            BENCHMARK(test_title.str())
+            for (int i = 0; i < powers_of_2.size(); i++)
             {
-                return tBLAS::BLAS::transpose(tA);
-            };
+                size_t m = powers_of_2[i];
+                vector<vector<double>> A(gen_rand_matrix<double>(m, m));
+                vector<vector<double>> B(gen_rand_matrix<double>(m, m));
+                stringstream test_title;
+                test_title << "[" << m << "x" << m << "]";
+                BENCHMARK(test_title.str())
+                {
+                    return tBLAS_test::Trivial::matmul(A, B);
+                };
+            }
         }
-    }
 
-    SECTION("Large Powers of 2")
-    {
-        for (int i = 0; i < large_powers_of_2.size(); i++)
+        SECTION("Large Powers of 2")
         {
-            size_t m = large_powers_of_2[i];
-            vector<vector<double>> A(gen_rand_matrix<double>(m, m));
-            tBLAS::MatrixX<double> tA(A);
-            stringstream test_title;
-            test_title << "[" << m << "x" << m << "]";
-            BENCHMARK(test_title.str())
+            for (int i = 0; i < large_powers_of_2.size(); i++)
             {
-                return tBLAS::BLAS::transpose(tA);
-            };
+                size_t m = large_powers_of_2[i];
+                vector<vector<double>> A(gen_rand_matrix<double>(m, m));
+                vector<vector<double>> B(gen_rand_matrix<double>(m, m));
+                stringstream test_title;
+                test_title << "[" << m << "x" << m << "]";
+                BENCHMARK(test_title.str())
+                {
+                    return tBLAS_test::Trivial::matmul(A, B);
+                };
+            }
         }
     }
 
-    SECTION("Primes")
+    TEST_CASE("tBLAS Matmul", "[tBLAS][matmul][bench]")
     {
-        for (int i = 0; i < primes.size(); i++)
+        using namespace std;
+
+        SECTION("Powers of 2")
         {
-            size_t m = primes[i];
-            vector<vector<double>> A(gen_rand_matrix<double>(m, m));
-            tBLAS::MatrixX<double> tA(A);
-            stringstream test_title;
-            test_title << "[" << m << "x" << m << "]";
-            BENCHMARK(test_title.str())
+            for (int i = 0; i < powers_of_2.size(); i++)
             {
-                return tBLAS::BLAS::transpose(tA);
-            };
+                size_t m = powers_of_2[i];
+                vector<vector<double>> A(gen_rand_matrix<double>(m, m));
+                vector<vector<double>> B(gen_rand_matrix<double>(m, m));
+                tBLAS::MatrixX<double> tA(A), tB(B);
+                stringstream test_title;
+                test_title << "[" << m << "x" << m << "]";
+                BENCHMARK(test_title.str())
+                {
+                    return tBLAS::BLAS::matmul(tA, tB);
+                };
+            }
+        }
+
+        SECTION("Large Powers of 2")
+        {
+            for (int i = 0; i < large_powers_of_2.size(); i++)
+            {
+                size_t m = large_powers_of_2[i];
+                vector<vector<double>> A(gen_rand_matrix<double>(m, m));
+                vector<vector<double>> B(gen_rand_matrix<double>(m, m));
+                tBLAS::MatrixX<double> tA(A), tB(B);
+                stringstream test_title;
+                test_title << "[" << m << "x" << m << "]";
+                BENCHMARK(test_title.str())
+                {
+                    return tBLAS::BLAS::matmul(tA, tB);
+                };
+            }
         }
     }
-}
-
-TEST_CASE("Trivial Matmul", "[trivial][matmul][bench]")
-{
-    using namespace std;
-
-    SECTION("Large Powers of 2")
-    {
-        for (int i = 0; i < large_powers_of_2.size(); i++)
-        {
-            size_t m = large_powers_of_2[i];
-            vector<vector<double>> A(gen_rand_matrix<double>(m, m));
-            vector<vector<double>> B(gen_rand_matrix<double>(m, m));
-            stringstream test_title;
-            test_title << "[" << m << "x" << m << "]";
-            BENCHMARK(test_title.str())
-            {
-                return tBLAS_test::Trivial::matmul(A, B);
-            };
-        }
-    }
-}
-
-TEST_CASE("tBLAS Matmul", "[tBLAS][matmul][bench]")
-{
-    using namespace std;
-
-    SECTION("Large Powers of 2")
-    {
-        for (int i = 0; i < large_powers_of_2.size(); i++)
-        {
-            size_t m = large_powers_of_2[i];
-            vector<vector<double>> A(gen_rand_matrix<double>(m, m));
-            vector<vector<double>> B(gen_rand_matrix<double>(m, m));
-            tBLAS::MatrixX<double> tA(A), tB(B);
-            stringstream test_title;
-            test_title << "[" << m << "x" << m << "]";
-            BENCHMARK(test_title.str())
-            {
-                return tBLAS::BLAS::matmul(tA, tB);
-            };
-        }
-    }
-}
+}; // namespace tBLAS_test

@@ -12,8 +12,8 @@
 namespace tBLAS
 {
 
-    template <typename T, std::size_t M, std::size_t K>
-    static inline void pack_vertical(typename tBLAS::Matrix<T, M, K>::const_iterator matrix_itr,
+    template <typename T, typename D, typename S>
+    static inline void pack_vertical(typename tBLAS::MatrixBase<T, D, S>::const_iterator matrix_itr,
                                      typename tBLAS::Matrix<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS>::iterator panel_itr,
                                      const std::pair<size_t, size_t> &panel_dims,
                                      size_t stride)
@@ -31,8 +31,8 @@ namespace tBLAS
         }
     }
 
-    template <typename T, std::size_t K, std::size_t N>
-    static inline void pack_horizontal(typename tBLAS::Matrix<T, K, N>::const_iterator matrix_itr,
+    template <typename T, typename D, typename S>
+    static inline void pack_horizontal(typename tBLAS::MatrixBase<T, D, S>::const_iterator matrix_itr,
                                        typename tBLAS::Matrix<T, HORIZONTAL_PANEL_ROWS, HORIZONTAL_PANEL_COLS>::iterator panel_itr,
                                        const std::pair<size_t, size_t> &panel_dims,
                                        size_t stride)

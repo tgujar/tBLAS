@@ -14,7 +14,6 @@ namespace tBLAS
 {
     namespace BLAS
     {
-
         template <typename T, size_t M, size_t K>
         tBLAS::Matrix<T, K, M> transpose(const tBLAS::Matrix<T, M, K> &A);
 
@@ -27,6 +26,8 @@ namespace tBLAS
         template <typename T>
         tBLAS::MatrixX<T> matmul(const tBLAS::MatrixX<T> &A, const tBLAS::MatrixX<T> &B);
     };
+
+    /* ----------------------------- Implementation ----------------------------- */
 
     template <typename T, size_t M, size_t K>
     Matrix<T, K, M> BLAS::transpose(const tBLAS::Matrix<T, M, K> &A)
@@ -48,7 +49,14 @@ namespace tBLAS
     MatrixX<T> BLAS::matmul(const tBLAS::MatrixX<T> &A, const tBLAS::MatrixX<T> &B)
     {
         MatrixX<T> C(A.rows(), B.cols());
-        BLAS::matrix_gemm(A, B, C);
+        // if (A.rows() * A.cols() <= 270000)
+        // {
+        //     BLAS::simple_gemm(A, B, C);
+        // }
+        // else
+        {
+            BLAS::matrix_gemm(A, B, C);
+        }
         return C;
     }
 
@@ -56,7 +64,14 @@ namespace tBLAS
     Matrix<T, M, N> BLAS::matmul(const Matrix<T, M, K> &A, const Matrix<T, K, N> &B)
     {
         Matrix<T, M, N> C;
-        BLAS::matrix_gemm(A, B, C);
+        // if (A.rows() * A.cols() <= 270000)
+        // {
+        //     BLAS::simple_gemm(A, B, C);
+        // }
+        // else
+        {
+            BLAS::matrix_gemm(A, B, C);
+        }
         return C;
     }
 
