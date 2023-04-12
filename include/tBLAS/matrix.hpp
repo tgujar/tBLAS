@@ -32,7 +32,7 @@ namespace tBLAS
         }
         const T &operator()(size_t i, size_t j) const
         {
-            return (*static_cast<Derived *>(this))(i, j);
+            return (*static_cast<const Derived *>(this))(i, j);
         }
 
         inline size_t rows() const noexcept { return static_cast<const Derived *>(this)->rows(); }

@@ -7,71 +7,55 @@
 #include <cstddef>
 #include "matrix.hpp"
 #include "utils.hpp"
-#include "./BLAS/matmul.hpp"
-#include "./BLAS/transpose.hpp"
+#include "./BLAS/matmul/matmul.hpp"
+#include "./BLAS/transpose/transpose.hpp"
 
 namespace tBLAS
 {
-    namespace BLAS
-    {
-        template <typename T, size_t M, size_t K>
-        tBLAS::Matrix<T, K, M> transpose(const tBLAS::Matrix<T, M, K> &A);
 
-        template <typename T>
-        tBLAS::MatrixX<T> transpose(const tBLAS::MatrixX<T> &A);
+    template <typename T, size_t M, size_t K>
+    Matrix<T, K, M> transpose(const Matrix<T, M, K> &A, BLAS::transpose_kernel kernel = BLAS::transpose_kernel::xl);
 
-        template <typename T, size_t M, size_t N, size_t K>
-        tBLAS::Matrix<T, M, N> matmul(const tBLAS::Matrix<T, M, K> &A, const tBLAS::Matrix<T, K, N> &B);
+    template <typename T>
+    MatrixX<T> transpose(const MatrixX<T> &A, BLAS::transpose_kernel kernel = BLAS::transpose_kernel::xl);
 
-        template <typename T>
-        tBLAS::MatrixX<T> matmul(const tBLAS::MatrixX<T> &A, const tBLAS::MatrixX<T> &B);
-    };
+    template <typename T, size_t M, size_t N, size_t K>
+    Matrix<T, M, N> mutiply(const Matrix<T, M, K> &A, const Matrix<T, K, N> &B, BLAS::matmul_kernel kernel = BLAS::matmul_kernel::sm);
+
+    template <typename T>
+    MatrixX<T> multiply(const MatrixX<T> &A, const MatrixX<T> &B, BLAS::matmul_kernel kernel = BLAS::matmul_kernel::xl);
 
     /* ----------------------------- Implementation ----------------------------- */
 
     template <typename T, size_t M, size_t K>
-    Matrix<T, K, M> BLAS::transpose(const tBLAS::Matrix<T, M, K> &A)
+    Matrix<T, K, M> transpose(const Matrix<T, M, K> &A, BLAS::transpose_kernel kernel)
     {
         Matrix<T, K, M> C;
-        BLAS::matrix_transpose(A, C);
+        BLAS::matrix_transpose(A, C, kernel);
         return C;
     }
 
     template <typename T>
-    MatrixX<T> BLAS::transpose(const tBLAS::MatrixX<T> &A)
+    MatrixX<T> transpose(const MatrixX<T> &A, BLAS::transpose_kernel kernel)
     {
         MatrixX<T> C(A.cols(), A.rows());
-        BLAS::matrix_transpose(A, C);
+        BLAS::matrix_transpose(A, C, kernel);
         return C;
     }
 
     template <typename T>
-    MatrixX<T> BLAS::matmul(const tBLAS::MatrixX<T> &A, const tBLAS::MatrixX<T> &B)
+    MatrixX<T> multiply(const MatrixX<T> &A, const MatrixX<T> &B, BLAS::matmul_kernel kernel)
     {
         MatrixX<T> C(A.rows(), B.cols());
-        // if (A.rows() * A.cols() <= 270000)
-        // {
-        //     BLAS::simple_gemm(A, B, C);
-        // }
-        // else
-        {
-            BLAS::matrix_gemm(A, B, C);
-        }
+        BLAS::matmul(A, B, C, kernel);
         return C;
     }
 
     template <typename T, size_t M, size_t N, size_t K>
-    Matrix<T, M, N> BLAS::matmul(const Matrix<T, M, K> &A, const Matrix<T, K, N> &B)
+    Matrix<T, M, N> multiply(const Matrix<T, M, K> &A, const Matrix<T, K, N> &B, BLAS::matmul_kernel kernel)
     {
         Matrix<T, M, N> C;
-        // if (A.rows() * A.cols() <= 270000)
-        // {
-        //     BLAS::simple_gemm(A, B, C);
-        // }
-        // else
-        {
-            BLAS::matrix_gemm(A, B, C);
-        }
+        BLAS::matmul(A, B, C, kernel);
         return C;
     }
 

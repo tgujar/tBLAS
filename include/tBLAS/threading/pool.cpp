@@ -13,18 +13,18 @@ namespace tBLAS
     namespace threading
     {
         /* ------------------------ ThreadPool Implementation ----------------------- */
-        ThreadPool::ThreadPool(unsigned int n) : in_progress(0), terminate_pool(false), jq_cv(), jq_mutex(), threads(), jq()
+        ThreadPool::ThreadPool(unsigned int n) : m_in_progress(0), m_terminate_pool(false), m_jq_cv(), m_jq_mutex(), m_threads(), m_jq()
         {
             unsigned int hw_threads = std::thread::hardware_concurrency();
 
             // use atleast 4 threads if hardware_concurrency() not available
-            num_threads = std::min(hw_threads == 0 ? 4 : hw_threads, n);
-            threads.reserve(num_threads);
+            m_num_threads = std::min(hw_threads == 0 ? 4 : hw_threads, n);
+            m_threads.reserve(m_num_threads);
 
-            for (unsigned int i = 0; i < num_threads; i++)
+            for (unsigned int i = 0; i < m_num_threads; i++)
             {
-                threads.push_back(std::thread([this]
-                                              { spin(); }));
+                m_threads.push_back(std::thread([this]
+                                                { spin(); }));
             }
         }
 
@@ -35,17 +35,17 @@ namespace tBLAS
 
         unsigned int ThreadPool::get_num_threads() const
         {
-            return num_threads;
+            return m_num_threads;
         }
 
         void ThreadPool::enqueue(const std::function<void()> &task)
         {
             {
-                std::unique_lock<std::mutex> lk(jq_mutex);
-                jq.push(task);
-                in_progress++;
+                std::unique_lock<std::mutex> lk(m_jq_mutex);
+                m_jq.push(task);
+                m_in_progress++;
             }
-            jq_cv.notify_one(); // notify one thread to execute the task
+            m_jq_cv.notify_one(); // notify one thread to execute the task
         }
 
         void ThreadPool::spin()
@@ -54,42 +54,42 @@ namespace tBLAS
             {
                 std::function<void()> curr_job;
                 {
-                    std::unique_lock<std::mutex> lk(jq_mutex);
+                    std::unique_lock<std::mutex> lk(m_jq_mutex);
 
                     // nothing to do if task queue is empty and pool is not being terminated
-                    jq_cv.wait(lk, [this]()
-                               { return !jq.empty() || terminate_pool; });
+                    m_jq_cv.wait(lk, [this]()
+                                 { return !m_jq.empty() || m_terminate_pool; });
 
-                    if (terminate_pool)
+                    if (m_terminate_pool)
                     {
                         return;
                     }
-                    curr_job = jq.front();
-                    jq.pop();
+                    curr_job = m_jq.front();
+                    m_jq.pop();
                 }
 
                 curr_job();
 
-                if (--in_progress == 0) // task completed
+                if (--m_in_progress == 0) // task completed
                 {
-                    jq_cv.notify_all(); // wake up sync() if its waiting
+                    m_jq_cv.notify_all(); // wake up sync() if its waiting
                 }
             }
         }
 
         void ThreadPool::sync()
         {
-            std::unique_lock<std::mutex> lk(jq_mutex);
-            jq_cv.wait(lk, [this]()
-                       { return in_progress == 0; });
+            std::unique_lock<std::mutex> lk(m_jq_mutex);
+            m_jq_cv.wait(lk, [this]()
+                         { return m_in_progress == 0; });
         }
 
         bool ThreadPool::busy()
         {
             bool poolbusy = true;
             {
-                std::unique_lock<std::mutex> lk(jq_mutex);
-                poolbusy = !(in_progress == 0);
+                std::unique_lock<std::mutex> lk(m_jq_mutex);
+                poolbusy = !(m_in_progress == 0);
             }
             return poolbusy;
         }
@@ -97,15 +97,15 @@ namespace tBLAS
         void ThreadPool::stop()
         {
             {
-                std::unique_lock<std::mutex> lk(jq_mutex);
-                terminate_pool = true;
+                std::unique_lock<std::mutex> lk(m_jq_mutex);
+                m_terminate_pool = true;
             }
-            jq_cv.notify_all();
-            for (auto &t : threads)
+            m_jq_cv.notify_all();
+            for (auto &t : m_threads)
             {
                 t.join();
             }
-            threads.clear();
+            m_threads.clear();
         }
 
         /* ------------------------ GlobalThreadPool Implementation ----------------------- */
