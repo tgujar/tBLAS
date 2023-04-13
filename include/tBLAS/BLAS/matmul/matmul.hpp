@@ -1,9 +1,7 @@
 #ifndef MATMUL_HPP
 #define MATMUL_HPP
 
-#include <memory>
-
-#include "../../matrix.hpp"
+#include "matrix.hpp"
 #include "./kernels/xl_mat.hpp"
 #include "./kernels/sm_mat.hpp"
 

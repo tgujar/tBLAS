@@ -40,7 +40,7 @@ namespace tBLAS_test
 
             tBLAS::MatrixX<int> tA(A);
 
-            compare_INT_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA).to_vector());
+            compare_INT_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA));
         }
     }
 
@@ -55,7 +55,7 @@ namespace tBLAS_test
 
             tBLAS::MatrixX<TestType> tA(A);
 
-            compare_FP_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA).to_vector());
+            compare_FP_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA));
         }
     }
 
@@ -71,7 +71,7 @@ namespace tBLAS_test
 
             tBLAS::MatrixX<int> tA(A);
 
-            compare_INT_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA).to_vector());
+            compare_INT_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA));
         }
     }
 
@@ -87,7 +87,7 @@ namespace tBLAS_test
 
             tBLAS::MatrixX<TestType> tA(A);
 
-            compare_FP_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA).to_vector());
+            compare_FP_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA));
         }
     }
 }; // namespace tBLAS_test

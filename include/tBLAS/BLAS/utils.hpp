@@ -1,13 +1,12 @@
 #ifndef TBLAS_UTILS_H
 #define TBLAS_UTILS_H
 
-#include "tBLAS/constants.hpp"
-#include "tBLAS/matrix.hpp"
+#include "constants.hpp"
+#include "matrix.hpp"
 #include <array>
 #include <vector>
 #include <utility>
 #include <cstddef>
-#include <cassert>
 
 namespace tBLAS
 {
@@ -23,10 +22,10 @@ namespace tBLAS
      * @param stride Number of colums in the input matrix
      */
     template <typename T, typename D, typename S>
-    inline void pack_vertical(typename tBLAS::MatrixBase<T, D, S>::const_iterator matrix_itr,
-                              typename tBLAS::Matrix<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS>::iterator panel_itr,
-                              const std::pair<size_t, size_t> &panel_dims,
-                              size_t stride)
+    void pack_vertical(typename tBLAS::MatrixBase<T, D, S>::const_iterator matrix_itr,
+                       typename tBLAS::MatrixX<T>::iterator panel_itr,
+                       const std::pair<size_t, size_t> &panel_dims,
+                       size_t stride)
     {
 
         for (size_t i_k = 0; i_k < panel_dims.second; ++i_k)
@@ -51,10 +50,10 @@ namespace tBLAS
      * @param stride Number of colums in the input matrix
      */
     template <typename T, typename D, typename S>
-    inline void pack_horizontal(typename tBLAS::MatrixBase<T, D, S>::const_iterator matrix_itr,
-                                typename tBLAS::Matrix<T, HORIZONTAL_PANEL_ROWS, HORIZONTAL_PANEL_COLS>::iterator panel_itr,
-                                const std::pair<size_t, size_t> &panel_dims,
-                                size_t stride)
+    void pack_horizontal(typename tBLAS::MatrixBase<T, D, S>::const_iterator matrix_itr,
+                         typename tBLAS::MatrixX<T>::iterator panel_itr,
+                         const std::pair<size_t, size_t> &panel_dims,
+                         size_t stride)
     {
         for (size_t i_k = 0; i_k < panel_dims.first; ++i_k)
         {

@@ -9,7 +9,7 @@
 #include <atomic>
 
 #include <tBLAS/matrix.hpp>
-#include <tBLAS/threading/pool.h>
+#include <tBLAS/threading/pool.hpp>
 #include "trivial.hpp"
 #include "helpers.hpp"
 

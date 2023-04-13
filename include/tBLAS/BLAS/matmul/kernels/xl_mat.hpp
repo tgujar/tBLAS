@@ -1,12 +1,10 @@
 #ifndef XL_MATMUL_HPP
 #define XL_MATMUL_HPP
 
-#include <memory>
-
-#include "../../../constants.hpp"
-#include "../../../matrix.hpp"
-#include "../../utils.hpp"
-#include "../../../threading/pool.h"
+#include "constants.hpp"
+#include "matrix.hpp"
+#include "BLAS/utils.hpp"
+#include "threading/pool.hpp"
 
 namespace tBLAS
 {
@@ -15,9 +13,9 @@ namespace tBLAS
         namespace detail
         {
             template <typename T>
-            using xl_mm_VPANEL = Matrix<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS>;
+            using xl_mm_VPANEL = MatrixX<T>;
             template <typename T>
-            using xl_mm_HPANEL = Matrix<T, HORIZONTAL_PANEL_ROWS, HORIZONTAL_PANEL_COLS>;
+            using xl_mm_HPANEL = MatrixX<T>;
         }
 
         /**
@@ -63,7 +61,7 @@ namespace tBLAS
          * @tparam D Derived class of MatrixBase in CRTP
          * @tparam S Storage class of the matrix in the derived class D
          * @param k The number of columns of the left matrix and the number of rows of the right matrix
-         *          in the current micro kernel <= KERNEL_KR.
+         *          in the current micro kernel.
          * @param m The number of rows of the left matrix in the current micro kernel <= KERNEL_MR.
          * @param n The number of columns of the right matrix in the current micro kerel <= KERNEL_NR.
          * @param a The iterator to the left matrix.
@@ -85,7 +83,9 @@ namespace tBLAS
         void xl_gemm(const MatrixBase<T, D, S> &A, const MatrixBase<T, D, S> &B, MatrixBase<T, D, S> &C)
         {
             auto &gtp = threading::GlobalThreadPool::get_instance();
-            detail::xl_mm_VPANEL<T> packA;
+            detail::xl_mm_VPANEL<T> packA(VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS);
+            assert(packA.rows() == VERTICAL_PANEL_ROWS);
+            assert(packA.cols() == VERTICAL_PANEL_COLS);
             for (size_t i_mc = 0; i_mc < A.rows(); i_mc += KERNEL_MC)
             {
                 size_t mc = std::min(A.rows() - i_mc, KERNEL_MC);
@@ -102,7 +102,7 @@ namespace tBLAS
 
                     for (size_t i_nc = 0; i_nc < B.cols(); i_nc += KERNEL_NC)
                     {
-                        auto packB = std::make_shared<detail::xl_mm_HPANEL<T>>();
+                        auto packB = std::make_shared<detail::xl_mm_HPANEL<T>>(HORIZONTAL_PANEL_ROWS, HORIZONTAL_PANEL_COLS);
                         size_t nc = std::min(B.cols() - i_nc, KERNEL_NC);
                         for (size_t i_nr = 0; i_nr < nc; i_nr += KERNEL_NR)
                         {
@@ -111,7 +111,7 @@ namespace tBLAS
                                                      {kc, std::min(nc - i_nr, KERNEL_NR)},
                                                      B.cols());
                         }
-                        gtp.enqueue([=, &packA, &C]() mutable
+                        gtp.enqueue([=, &packA, &C]()
                                     { macro_kernel_gemm<T, D, S>(mc,
                                                                  nc,
                                                                  kc,
@@ -126,7 +126,7 @@ namespace tBLAS
         }
 
         template <typename T, typename D, typename S>
-        inline void macro_kernel_gemm(
+        void macro_kernel_gemm(
             size_t mc, size_t nc, size_t kc,
             const detail::xl_mm_VPANEL<T> &packA,
             const detail::xl_mm_HPANEL<T> &packB,
@@ -150,7 +150,7 @@ namespace tBLAS
         }
 
         template <typename T, typename D, typename S>
-        inline void micro_kernel_gemm(
+        void micro_kernel_gemm(
             size_t k, size_t m, size_t n,
             typename detail::xl_mm_VPANEL<T>::const_iterator a,
             typename detail::xl_mm_HPANEL<T>::const_iterator b,

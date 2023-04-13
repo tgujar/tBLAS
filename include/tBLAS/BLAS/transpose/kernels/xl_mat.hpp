@@ -1,11 +1,10 @@
 #ifndef XL_TRANSPOSE_HPP
 #define XL_TRANSPOSE_HPP
 
-#include <memory>
-
-#include "../../../constants.hpp"
-#include "../../../matrix.hpp"
-#include "../../utils.hpp"
+#include "constants.hpp"
+#include "matrix.hpp"
+#include "BLAS/utils.hpp"
+#include "threading/pool.hpp"
 
 namespace tBLAS
 {
@@ -14,16 +13,16 @@ namespace tBLAS
         namespace detail
         {
             template <typename T>
-            using xl_txp_VPANEL = Matrix<T, VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS>;
+            using xl_txp_VPANEL = MatrixX<T>;
         }
 
         /**
-         * @brief Helper function for macro_kernel_transpose. Computes matrix transpose for a micro kernel of size KERNEL_MR x KERNEL_KR.
+         * @brief Helper function for macro_kernel_transpose. Computes matrix transpose for a micro kernel.
          *
          * @tparam T The type of the matrix elements.
          * @tparam D Derived class of MatrixBase in CRTP
          * @tparam S Storage class of the matrix in the derived class D
-         * @param k The number of colums in the current micro kernel <= KERNEL_KR.
+         * @param k The number of colums in the current micro kernel.
          * @param m The number of rows in the current micor kernel <= KERNEL_MR.
          * @param a The iterator to the left matrix.
          * @param C_itr The iterator to the result matrix.
@@ -77,7 +76,8 @@ namespace tBLAS
                 size_t mc = std::min(A.rows() - i_mc, KERNEL_MC);
                 for (size_t i_kc = 0; i_kc < A.cols(); i_kc += KERNEL_KC)
                 {
-                    auto packA = std::make_shared<detail::xl_txp_VPANEL<T>>();
+
+                    auto packA = std::make_shared<detail::xl_mm_VPANEL<T>>(VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS);
                     size_t kc = std::min(A.cols() - i_kc, KERNEL_KC);
                     for (size_t i_mr = 0; i_mr < mc; i_mr += KERNEL_MR)
                     {
@@ -87,7 +87,7 @@ namespace tBLAS
                                                {std::min(mc - i_mr, KERNEL_MR), kc},
                                                A.cols());
                     }
-                    gtp.enqueue([=, &C]() mutable
+                    gtp.enqueue([=, &C]()
                                 { macro_kernel_transpose<T, D, S>(
                                       mc, kc,
                                       *packA,

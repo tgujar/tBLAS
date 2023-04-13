@@ -2,7 +2,6 @@
 #define TBLAS_CONSTANTS_H
 
 #include <cstddef>
-#include "./threading/pool.h"
 
 namespace tBLAS
 {

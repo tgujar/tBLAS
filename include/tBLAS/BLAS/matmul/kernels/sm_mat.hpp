@@ -1,12 +1,9 @@
 #ifndef SM_MATMUL_HPP
 #define SM_MATMUL_HPP
 
-#include <memory>
-
-#include "../../../constants.hpp"
-#include "../../../matrix.hpp"
-#include "../../utils.hpp"
-#include "../../../threading/pool.h"
+#include "constants.hpp"
+#include "matrix.hpp"
+#include "BLAS/utils.hpp"
 
 namespace tBLAS
 {

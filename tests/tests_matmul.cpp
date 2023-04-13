@@ -45,7 +45,7 @@ namespace tBLAS_test
                 vector<vector<int>> A(gen_rand_matrix<int>(m, n));
                 vector<vector<int>> B(identity<int>(n));
 
-                compare_INT_2D(tBLAS_test::Trivial::matmul(A, B), A);
+                REQUIRE(tBLAS_test::Trivial::matmul(A, B) == A);
             }
         }
     }
@@ -63,7 +63,7 @@ namespace tBLAS_test
             tBLAS::MatrixX<int> tA(A);
             tBLAS::MatrixX<int> tB(B);
 
-            compare_INT_2D(tBLAS_test::Trivial::matmul(A, B), tBLAS::multiply(tA, tB).to_vector());
+            compare_INT_2D(tBLAS_test::Trivial::matmul(A, B), tBLAS::multiply(tA, tB));
         }
     }
 
@@ -80,7 +80,7 @@ namespace tBLAS_test
             tBLAS::MatrixX<TestType> tA(A);
             tBLAS::MatrixX<TestType> tB(B);
 
-            compare_FP_2D(tBLAS_test::Trivial::matmul(A, B), tBLAS::multiply(tA, tB).to_vector());
+            compare_FP_2D(tBLAS_test::Trivial::matmul(A, B), tBLAS::multiply(tA, tB));
         }
     }
 
@@ -99,7 +99,7 @@ namespace tBLAS_test
             tBLAS::MatrixX<int> tA(A);
             tBLAS::MatrixX<int> tB(B);
 
-            compare_INT_2D(tBLAS_test::Trivial::matmul(A, B), tBLAS::multiply(tA, tB).to_vector());
+            compare_INT_2D(tBLAS_test::Trivial::matmul(A, B), tBLAS::multiply(tA, tB));
         }
     }
 
@@ -118,7 +118,7 @@ namespace tBLAS_test
             tBLAS::MatrixX<TestType> tA(A);
             tBLAS::MatrixX<TestType> tB(B);
 
-            compare_FP_2D(tBLAS_test::Trivial::matmul(A, B), tBLAS::multiply(tA, tB).to_vector());
+            compare_FP_2D(tBLAS_test::Trivial::matmul(A, B), tBLAS::multiply(tA, tB));
         }
     }
 }; // namespace tBLAS_test

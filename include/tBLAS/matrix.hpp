@@ -42,13 +42,13 @@ namespace tBLAS
             return (*static_cast<const Derived *>(this))(i, j);
         }
 
-        inline size_t rows() const noexcept { return static_cast<const Derived *>(this)->rows(); }
-        inline size_t cols() const noexcept { return static_cast<const Derived *>(this)->cols(); }
+        size_t rows() const noexcept { return static_cast<const Derived *>(this)->rows(); }
+        size_t cols() const noexcept { return static_cast<const Derived *>(this)->cols(); }
 
-        inline iterator begin() noexcept { return static_cast<Derived *>(this)->begin(); }
-        inline const_iterator const cbegin() const noexcept { return static_cast<const Derived *>(this)->cbegin(); }
-        inline iterator end() noexcept { return static_cast<Derived *>(this)->end(); }
-        inline const_iterator cend() const noexcept { return static_cast<const Derived *>(this)->cend(); }
+        iterator begin() noexcept { return static_cast<Derived *>(this)->begin(); }
+        const_iterator const cbegin() const noexcept { return static_cast<const Derived *>(this)->cbegin(); }
+        iterator end() noexcept { return static_cast<Derived *>(this)->end(); }
+        const_iterator cend() const noexcept { return static_cast<const Derived *>(this)->cend(); }
     };
 
     /* -------------------------------- Interface ------------------------------- */
@@ -106,13 +106,13 @@ namespace tBLAS
         T &operator()(size_t i, size_t j);
         const T &operator()(size_t i, size_t j) const;
 
-        inline size_t rows() const noexcept;
-        inline size_t cols() const noexcept;
+        size_t rows() const noexcept;
+        size_t cols() const noexcept;
 
-        inline iterator begin() noexcept;
-        inline const_iterator cbegin() const noexcept;
-        inline iterator end() noexcept;
-        inline const_iterator cend() const noexcept;
+        iterator begin() noexcept;
+        const_iterator cbegin() const noexcept;
+        iterator end() noexcept;
+        const_iterator cend() const noexcept;
     };
 
     template <typename T>
@@ -159,15 +159,13 @@ namespace tBLAS
         T &operator()(size_t i, size_t j);
         const T &operator()(size_t i, size_t j) const;
 
-        inline size_t rows() const noexcept;
-        inline size_t cols() const noexcept;
+        size_t rows() const noexcept;
+        size_t cols() const noexcept;
 
-        inline iterator begin() noexcept;
-        inline const_iterator cbegin() const noexcept;
-        inline iterator end() noexcept;
-        inline const_iterator cend() const noexcept;
-
-        std::vector<std::vector<T>> to_vector() const;
+        iterator begin() noexcept;
+        const_iterator cbegin() const noexcept;
+        iterator end() noexcept;
+        const_iterator cend() const noexcept;
 
         /**
          * @brief Resize the matrix to the given dimensions
@@ -252,21 +250,21 @@ namespace tBLAS
     }
 
     template <typename T, size_t M, size_t N>
-    inline size_t Matrix<T, M, N>::rows() const noexcept { return m_rows; }
+    size_t Matrix<T, M, N>::rows() const noexcept { return m_rows; }
     template <typename T, size_t M, size_t N>
-    inline size_t Matrix<T, M, N>::cols() const noexcept { return m_cols; }
+    size_t Matrix<T, M, N>::cols() const noexcept { return m_cols; }
 
     template <typename T, size_t M, size_t N>
-    inline typename Matrix<T, M, N>::iterator Matrix<T, M, N>::begin() noexcept { return m_data.begin(); }
+    typename Matrix<T, M, N>::iterator Matrix<T, M, N>::begin() noexcept { return m_data.begin(); }
 
     template <typename T, size_t M, size_t N>
-    inline typename Matrix<T, M, N>::iterator Matrix<T, M, N>::end() noexcept { return m_data.end(); }
+    typename Matrix<T, M, N>::iterator Matrix<T, M, N>::end() noexcept { return m_data.end(); }
 
     template <typename T, size_t M, size_t N>
-    inline typename Matrix<T, M, N>::const_iterator Matrix<T, M, N>::cbegin() const noexcept { return m_data.cbegin(); }
+    typename Matrix<T, M, N>::const_iterator Matrix<T, M, N>::cbegin() const noexcept { return m_data.cbegin(); }
 
     template <typename T, size_t M, size_t N>
-    inline typename Matrix<T, M, N>::const_iterator Matrix<T, M, N>::cend() const noexcept { return m_data.cend(); }
+    typename Matrix<T, M, N>::const_iterator Matrix<T, M, N>::cend() const noexcept { return m_data.cend(); }
 
     template <typename T, size_t M, size_t N>
     std::ostream &operator<<(std::ostream &os, const tBLAS::Matrix<T, M, N> &A)
@@ -351,9 +349,9 @@ namespace tBLAS
     }
 
     template <typename T>
-    inline size_t MatrixX<T>::rows() const noexcept { return m_rows; }
+    size_t MatrixX<T>::rows() const noexcept { return m_rows; }
     template <typename T>
-    inline size_t MatrixX<T>::cols() const noexcept { return m_cols; }
+    size_t MatrixX<T>::cols() const noexcept { return m_cols; }
 
     template <typename T>
     void MatrixX<T>::resize(size_t rows, size_t cols)
@@ -372,30 +370,16 @@ namespace tBLAS
     }
 
     template <typename T>
-    std::vector<std::vector<T>> MatrixX<T>::to_vector() const
-    {
-        std::vector<std::vector<T>> A(rows(), std::vector<T>(cols()));
-        for (int i = 0; i < rows(); i++)
-        {
-            for (int j = 0; j < cols(); ++j)
-            {
-                A[i][j] = (*this)(i, j);
-            }
-        }
-        return A;
-    }
+    typename MatrixX<T>::iterator MatrixX<T>::begin() noexcept { return m_data.begin(); }
 
     template <typename T>
-    inline typename MatrixX<T>::iterator MatrixX<T>::begin() noexcept { return m_data.begin(); }
+    typename MatrixX<T>::iterator MatrixX<T>::end() noexcept { return m_data.end(); }
 
     template <typename T>
-    inline typename MatrixX<T>::iterator MatrixX<T>::end() noexcept { return m_data.end(); }
+    typename MatrixX<T>::const_iterator MatrixX<T>::cbegin() const noexcept { return m_data.cbegin(); }
 
     template <typename T>
-    inline typename MatrixX<T>::const_iterator MatrixX<T>::cbegin() const noexcept { return m_data.cbegin(); }
-
-    template <typename T>
-    inline typename MatrixX<T>::const_iterator MatrixX<T>::cend() const noexcept { return m_data.cend(); }
+    typename MatrixX<T>::const_iterator MatrixX<T>::cend() const noexcept { return m_data.cend(); }
 
     template <typename T>
     std::ostream &operator<<(std::ostream &os, const MatrixX<T> &A)

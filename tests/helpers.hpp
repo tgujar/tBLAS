@@ -44,8 +44,11 @@ namespace tBLAS_test
      * @param exp Expected matrix
      * @param ip Input matrix
      */
-    template <typename T>
-    static void compare_FP_2D(const std::vector<std::vector<T>> &exp, const std::vector<std::vector<T>> &ip);
+
+    template <typename T, typename D, typename S, typename Container>
+    static void compare_FP_2D(const Container &exp, const tBLAS::MatrixBase<T, D, S> &ip);
+    // template <typename T>
+    // static void compare_FP_2D(const std::vector<std::vector<T>> &exp, const std::vector<std::vector<T>> &ip);
 
     /**
      * @brief Compare two 2D matrices
@@ -53,7 +56,9 @@ namespace tBLAS_test
      * @param exp Expected matrix
      * @param ip Input matrix
      */
-    static void compare_INT_2D(const std::vector<std::vector<int>> &exp, const std::vector<std::vector<int>> &ip);
+    template <typename T, typename D, typename S, typename Container>
+    static void compare_INT_2D(const Container &exp, const tBLAS::MatrixBase<T, D, S> &ip);
+    // static void compare_INT_2D(const std::vector<std::vector<int>> &exp, const std::vector<std::vector<int>> &ip);
 
     /* ----------------------------- Implementation ----------------------------- */
     template <typename T>
@@ -95,28 +100,52 @@ namespace tBLAS_test
         return R;
     }
 
-    template <typename T>
-    static void compare_FP_2D(const std::vector<std::vector<T>> &exp, const std::vector<std::vector<T>> &ip)
+    template <typename T, typename D, typename S, typename Container>
+    static void compare_FP_2D(const Container &exp, const tBLAS::MatrixBase<T, D, S> &ip)
     {
         for (int i = 0; i < exp.size(); ++i)
         {
             for (int j = 0; j < exp[0].size(); j++)
             {
-                REQUIRE_THAT(ip[i][j], Catch::Matchers::WithinRel(exp[i][j]));
+                REQUIRE_THAT(ip(i, j), Catch::Matchers::WithinRel(exp[i][j]));
             }
         }
     }
 
-    static void compare_INT_2D(const std::vector<std::vector<int>> &exp, const std::vector<std::vector<int>> &ip)
+    template <typename T, typename D, typename S, typename Container>
+    static void compare_INT_2D(const Container &exp, const tBLAS::MatrixBase<T, D, S> &ip)
     {
         for (int i = 0; i < exp.size(); ++i)
         {
             for (int j = 0; j < exp[0].size(); j++)
             {
-                REQUIRE(ip[i][j] == exp[i][j]);
+                REQUIRE(ip(i, j) == exp[i][j]);
             }
         }
     }
+
+    // template <typename T>
+    // static void compare_FP_2D(const std::vector<std::vector<T>> &exp, const std::vector<std::vector<T>> &ip)
+    // {
+    //     for (int i = 0; i < exp.size(); ++i)
+    //     {
+    //         for (int j = 0; j < exp[0].size(); j++)
+    //         {
+    //             REQUIRE_THAT(ip[i][j], Catch::Matchers::WithinRel(exp[i][j]));
+    //         }
+    //     }
+    // }
+
+    // static void compare_INT_2D(const std::vector<std::vector<int>> &exp, const std::vector<std::vector<int>> &ip)
+    // {
+    //     for (int i = 0; i < exp.size(); ++i)
+    //     {
+    //         for (int j = 0; j < exp[0].size(); j++)
+    //         {
+    //             REQUIRE(ip[i][j] == exp[i][j]);
+    //         }
+    //     }
+    // }
 
 }; // namespace tBLAS_test
 
