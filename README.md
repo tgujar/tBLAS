@@ -1,8 +1,8 @@
 # tBLAS
 
-A header only multithreaded and cache-optimized linear algebra library
+A header only multithreaded and cache-optimized linear algebra library.
 
-### TODO and future
+## TODO and future
 
 - **Optimized kernel for transpose**: The current implementation supports fast transpose using tiling and multithreading for large matrices. However the size of the kernel needs to be tuned specifically for transpose. The lack of this leads to longer compute times than the naive version for transpose of large matrices.
 
@@ -10,7 +10,7 @@ A header only multithreaded and cache-optimized linear algebra library
 
 - **More tests**: The current tests showcase the correctness of the solution fairly well. There is still room for more coverage.
 
-### Installation
+## Installation
 
 From project root run
 
@@ -39,7 +39,7 @@ $ make bench
 $ ./tests/bench  --benchmark-samples=5
 ```
 
-### Usage
+## Usage
 
 Example CMake snippet
 
