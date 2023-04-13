@@ -9,7 +9,18 @@ namespace tBLAS
 {
     namespace BLAS
     {
-
+        /**
+         * @brief Performs matrix multiplication of two matrices.
+         *
+         * To be used for small matrices which might fit into L1 cache.
+         *
+         * @tparam T Type of the matrix
+         * @tparam D Derived class of MatrixBase in CRTP.
+         * @tparam S Storage class of the matrix in the derived class D.
+         * @param A Left matrix
+         * @param B Right matrix
+         * @param C Result matrix
+         */
         template <typename T, typename D, typename S>
         void sm_gemm(const MatrixBase<T, D, S> &A, const MatrixBase<T, D, S> &B, MatrixBase<T, D, S> &C);
 

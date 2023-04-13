@@ -32,62 +32,76 @@ namespace tBLAS_test
     TEST_CASE("Transpose INT Square", "[transpose]")
     {
         using namespace std;
-        for (int i = 0; i < 10; i++)
+        size_t m = GENERATE(take(1, random(10, 50)));
+
+        vector<vector<int>> A(gen_rand_matrix<int>(m, m));
+
+        tBLAS::MatrixX<int> tA(A);
+
+        SECTION("XL kernel")
         {
-            size_t m = GENERATE(take(1, random(10, 50)));
-
-            vector<vector<int>> A(gen_rand_matrix<int>(m, m));
-
-            tBLAS::MatrixX<int> tA(A);
-
-            compare_INT_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA));
+            compare_INT_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA, tBLAS::BLAS::transpose_kernel::xl));
+        }
+        SECTION("SM kernel")
+        {
+            compare_INT_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA, tBLAS::BLAS::transpose_kernel::sm));
         }
     }
 
-    TEMPLATE_TEST_CASE("Transpose FP Square", "[matmul]", float, double)
+    TEMPLATE_TEST_CASE("Transpose FP Square", "[transpose]", float, double)
     {
         using namespace std;
-        for (int i = 0; i < 10; i++)
+        size_t m = GENERATE(take(1, random(10, 50)));
+        vector<vector<TestType>> A(gen_rand_matrix<TestType>(m, m));
+
+        tBLAS::MatrixX<TestType> tA(A);
+
+        SECTION("XL kernel")
         {
-            size_t m = GENERATE(take(1, random(10, 50)));
-
-            vector<vector<TestType>> A(gen_rand_matrix<TestType>(m, m));
-
-            tBLAS::MatrixX<TestType> tA(A);
-
-            compare_FP_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA));
+            compare_FP_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA, tBLAS::BLAS::transpose_kernel::xl));
+        }
+        SECTION("SM kernel")
+        {
+            compare_FP_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA, tBLAS::BLAS::transpose_kernel::sm));
         }
     }
 
     TEST_CASE("Transpose INT Rectangle", "[transpose]")
     {
         using namespace std;
-        for (int i = 0; i < 10; i++)
+        size_t m = GENERATE(take(1, random(10, 50)));
+        size_t n = GENERATE(take(1, random(10, 50)));
+
+        vector<vector<int>> A(gen_rand_matrix<int>(m, n));
+
+        tBLAS::MatrixX<int> tA(A);
+
+        SECTION("XL kernel")
         {
-            size_t m = GENERATE(take(1, random(10, 50)));
-            size_t n = GENERATE(take(1, random(10, 50)));
-
-            vector<vector<int>> A(gen_rand_matrix<int>(m, n));
-
-            tBLAS::MatrixX<int> tA(A);
-
-            compare_INT_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA));
+            compare_INT_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA, tBLAS::BLAS::transpose_kernel::xl));
+        }
+        SECTION("SM kernel")
+        {
+            compare_INT_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA, tBLAS::BLAS::transpose_kernel::sm));
         }
     }
 
-    TEMPLATE_TEST_CASE("Transpose FP Rectangle", "[matmul]", float, double)
+    TEMPLATE_TEST_CASE("Transpose FP Rectangle", "[transpose]", float, double)
     {
         using namespace std;
-        for (int i = 0; i < 10; i++)
+        size_t m = GENERATE(take(1, random(10, 50)));
+        size_t n = GENERATE(take(1, random(10, 50)));
+
+        vector<vector<TestType>> A(gen_rand_matrix<TestType>(m, n));
+        tBLAS::MatrixX<TestType> tA(A);
+
+        SECTION("XL kernel")
         {
-            size_t m = GENERATE(take(1, random(10, 50)));
-            size_t n = GENERATE(take(1, random(10, 50)));
-
-            vector<vector<TestType>> A(gen_rand_matrix<TestType>(m, n));
-
-            tBLAS::MatrixX<TestType> tA(A);
-
-            compare_FP_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA));
+            compare_FP_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA, tBLAS::BLAS::transpose_kernel::xl));
+        }
+        SECTION("SM kernel")
+        {
+            compare_FP_2D(tBLAS_test::Trivial::transpose(A), tBLAS::transpose(tA, tBLAS::BLAS::transpose_kernel::sm));
         }
     }
 }; // namespace tBLAS_test

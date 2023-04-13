@@ -71,14 +71,19 @@ namespace tBLAS
         void xl_txp(const MatrixBase<T, D, S> &A, MatrixBase<T, D, S> &C)
         {
             auto &gtp = threading::GlobalThreadPool::get_instance();
+
+            // iterate over macro kernel block rows
             for (size_t i_mc = 0; i_mc < A.rows(); i_mc += KERNEL_MC)
             {
                 size_t mc = std::min(A.rows() - i_mc, KERNEL_MC);
+                // iterate over macro kernel block columns
                 for (size_t i_kc = 0; i_kc < A.cols(); i_kc += KERNEL_KC)
                 {
 
                     auto packA = std::make_shared<detail::xl_mm_VPANEL<T>>(VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS);
                     size_t kc = std::min(A.cols() - i_kc, KERNEL_KC);
+
+                    // pack micro kernels in macro kernel
                     for (size_t i_mr = 0; i_mr < mc; i_mr += KERNEL_MR)
                     {
 
@@ -87,6 +92,8 @@ namespace tBLAS
                                                {std::min(mc - i_mr, KERNEL_MR), kc},
                                                A.cols());
                     }
+
+                    // multithreaded transpose
                     gtp.enqueue([=, &C]()
                                 { macro_kernel_transpose<T, D, S>(
                                       mc, kc,
@@ -105,6 +112,7 @@ namespace tBLAS
             typename tBLAS::MatrixBase<T, D, S>::iterator C_itr,
             size_t C_stride)
         {
+            // iterate over micro kernels in the macro kernel
             for (size_t i = 0; i < mc; i += KERNEL_MR)
             {
                 micro_kernel_transpose<T, D, S>(
@@ -123,11 +131,12 @@ namespace tBLAS
             typename tBLAS::MatrixBase<T, D, S>::iterator C_itr,
             size_t C_stride)
         {
-            for (size_t l = 0; l < k; l++)
+            for (size_t row = 0; row < k; row++)
             {
-                for (size_t i = 0; i < m; i++)
+                for (size_t col = 0; col < m; col++)
                 {
-                    *(C_itr + l * C_stride + i) = (*(a + l * m + i));
+                    // we do direct assign since vertical packing has already tranposed the matrix
+                    *(C_itr + row * C_stride + col) = (*(a + row * m + col));
                 }
             }
         }

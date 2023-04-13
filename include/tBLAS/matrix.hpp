@@ -11,7 +11,6 @@
 #include <stdexcept>
 #include <array>
 
-#include "constants.hpp"
 namespace tBLAS
 {
     /* ------------------------- Matrix CRTP Base class ------------------------- */

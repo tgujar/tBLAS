@@ -1,6 +1,7 @@
 #ifndef BLAS_HPP
 #define BLAS_HPP
 
+#include <iostream>
 #include <vector>
 #include <array>
 #include <algorithm>
@@ -22,7 +23,7 @@ namespace tBLAS
      * @return Matrix<T, K, M> Transposed matrix
      */
     template <typename T, size_t M, size_t K>
-    Matrix<T, K, M> transpose(const Matrix<T, M, K> &A, BLAS::transpose_kernel kernel = BLAS::transpose_kernel::xl);
+    Matrix<T, K, M> transpose(const Matrix<T, M, K> &A, BLAS::transpose_kernel kernel = BLAS::transpose_kernel::sm);
 
     /**
      * @brief Performs out of place transpose a matrix of dynamic size

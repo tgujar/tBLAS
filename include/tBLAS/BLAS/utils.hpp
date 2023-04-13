@@ -1,7 +1,6 @@
 #ifndef TBLAS_UTILS_H
 #define TBLAS_UTILS_H
 
-#include "constants.hpp"
 #include "matrix.hpp"
 #include <array>
 #include <vector>
@@ -27,9 +26,10 @@ namespace tBLAS
                        const std::pair<size_t, size_t> &panel_dims,
                        size_t stride)
     {
-
+        // iterate over columns
         for (size_t i_k = 0; i_k < panel_dims.second; ++i_k)
         {
+            // iterate over rows
             for (size_t i_m = 0; i_m < panel_dims.first; ++i_m)
             {
                 *panel_itr = *(matrix_itr + i_m * stride + i_k);
@@ -55,8 +55,10 @@ namespace tBLAS
                          const std::pair<size_t, size_t> &panel_dims,
                          size_t stride)
     {
+        // iterate over rows
         for (size_t i_k = 0; i_k < panel_dims.first; ++i_k)
         {
+            // iterate over columns
             for (size_t i_n = 0; i_n < panel_dims.second; ++i_n)
             {
                 *panel_itr = *(matrix_itr + i_k * stride + i_n);

@@ -82,16 +82,20 @@ namespace tBLAS
         template <typename T, typename D, typename S>
         void xl_gemm(const MatrixBase<T, D, S> &A, const MatrixBase<T, D, S> &B, MatrixBase<T, D, S> &C)
         {
+            // ref: https://arxiv.org/pdf/1609.00076v1.pdf
+
             auto &gtp = threading::GlobalThreadPool::get_instance();
             detail::xl_mm_VPANEL<T> packA(VERTICAL_PANEL_ROWS, VERTICAL_PANEL_COLS);
-            assert(packA.rows() == VERTICAL_PANEL_ROWS);
-            assert(packA.cols() == VERTICAL_PANEL_COLS);
+
+            // iterate over macro kernel rows in A
             for (size_t i_mc = 0; i_mc < A.rows(); i_mc += KERNEL_MC)
             {
                 size_t mc = std::min(A.rows() - i_mc, KERNEL_MC);
+                // iterate over macro kernel columns in A or macro kernel rows in B
                 for (size_t i_kc = 0; i_kc < A.cols(); i_kc += KERNEL_KC)
                 {
                     size_t kc = std::min(A.cols() - i_kc, KERNEL_KC);
+                    // pack micro kernels in the macro kernel for A
                     for (size_t i_mr = 0; i_mr < mc; i_mr += KERNEL_MR)
                     {
                         pack_vertical<T, D, S>(A.cbegin() + i_kc + A.cols() * (i_mc + i_mr),
@@ -100,10 +104,12 @@ namespace tBLAS
                                                A.cols());
                     }
 
+                    // iterate over macro kernel columns in B
                     for (size_t i_nc = 0; i_nc < B.cols(); i_nc += KERNEL_NC)
                     {
                         auto packB = std::make_shared<detail::xl_mm_HPANEL<T>>(HORIZONTAL_PANEL_ROWS, HORIZONTAL_PANEL_COLS);
                         size_t nc = std::min(B.cols() - i_nc, KERNEL_NC);
+                        // pack micro kernels in the macro kernel for B
                         for (size_t i_nr = 0; i_nr < nc; i_nr += KERNEL_NR)
                         {
                             pack_horizontal<T, D, S>(B.cbegin() + i_kc * B.cols() + i_nc + i_nr,
@@ -111,6 +117,7 @@ namespace tBLAS
                                                      {kc, std::min(nc - i_nr, KERNEL_NR)},
                                                      B.cols());
                         }
+                        // compute multithreaded matmul for macro kernel
                         gtp.enqueue([=, &packA, &C]()
                                     { macro_kernel_gemm<T, D, S>(mc,
                                                                  nc,
@@ -133,8 +140,10 @@ namespace tBLAS
             typename tBLAS::MatrixBase<T, D, S>::iterator C_itr,
             size_t C_stride)
         {
+            // iterate over micro kernel rows
             for (size_t i = 0; i < mc; i += KERNEL_MR)
             {
+                // iterate over micro kernel columns
                 for (size_t j = 0; j < nc; j += KERNEL_NR)
                 {
                     micro_kernel_gemm<T, D, S>(
@@ -157,13 +166,16 @@ namespace tBLAS
             typename tBLAS::MatrixBase<T, D, S>::iterator C_itr,
             size_t C_stride)
         {
-            for (size_t l = 0; l < k; l++)
+            // iterate over micro kernel columns in A or micro kernel rows in B
+            for (size_t i_k = 0; i_k < k; i_k++)
             {
-                for (size_t j = 0; j < n; j++)
+                // iterate over micro kernel columns in B
+                for (size_t i_n = 0; i_n < n; i_n++)
                 {
-                    for (size_t i = 0; i < m; i++)
+                    // iterate over micro kernel rows in A
+                    for (size_t i_m = 0; i_m < m; i_m++)
                     {
-                        *(C_itr + i * C_stride + j) += (*(a + l * m + i)) * (*(b + l * n + j));
+                        *(C_itr + i_m * C_stride + i_n) += (*(a + i_k * m + i_m)) * (*(b + i_k * n + i_n));
                     }
                 }
             }
