@@ -6,9 +6,9 @@
 #include <array>
 #include <algorithm>
 #include <cstddef>
-#include "matrix.hpp"
-#include "BLAS/matmul/matmul.hpp"
-#include "BLAS/transpose/transpose.hpp"
+#include <tBLAS/matrix.hpp>
+#include <tBLAS/BLAS/matmul/matmul.hpp>
+#include <tBLAS/BLAS/transpose/transpose.hpp>
 
 namespace tBLAS
 {

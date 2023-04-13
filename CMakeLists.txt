@@ -3,9 +3,14 @@ project(tBLAS VERSION 0.0.1
             DESCRIPTION "A header only library for high performance linear algebra"
             HOMEPAGE_URL "https://github.com/tgujar/tBLAS")
 
+# Set the compiler to g++
+set(CMAKE_CXX_COMPILER g++)
+
+# Set the C++ standard to C++11
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall  -O3")
-set(CMAKE_CXX_FLAGS "-O3 -Wall")
+
+# Set the optimization level and warning flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)

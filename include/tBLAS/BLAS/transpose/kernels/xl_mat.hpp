@@ -1,10 +1,10 @@
 #ifndef XL_TRANSPOSE_HPP
 #define XL_TRANSPOSE_HPP
 
-#include "constants.hpp"
-#include "matrix.hpp"
-#include "BLAS/utils.hpp"
-#include "threading/pool.hpp"
+#include <tBLAS/constants.hpp>
+#include <tBLAS/matrix.hpp>
+#include <tBLAS/BLAS/utils.hpp>
+#include <tBLAS/threading/pool.hpp>
 
 namespace tBLAS
 {

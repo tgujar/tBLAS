@@ -1,4 +1,6 @@
 #include <vector>
+#include <string>
+#include <iostream>
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch_test_macros.hpp>
@@ -25,6 +27,12 @@ namespace tBLAS_test
                     REQUIRE(A(i, j) == (i * 4 + j + 1));
                 }
             }
+        }
+        SECTION("PRINT")
+        {
+            using tBLAS::operator<<;
+            tBLAS::Matrix<int, 2, 4> A{{1, 2, 3, 4}, {5, 6, 7, 8}};
+            std::cout << A << std::endl;
         }
     }
 }; // namespace tBLAS_test

@@ -1,9 +1,9 @@
 #ifndef SM_MATMUL_HPP
 #define SM_MATMUL_HPP
 
-#include "constants.hpp"
-#include "matrix.hpp"
-#include "BLAS/utils.hpp"
+#include <tBLAS/constants.hpp>
+#include <tBLAS/matrix.hpp>
+#include <tBLAS/BLAS/utils.hpp>
 
 namespace tBLAS
 {

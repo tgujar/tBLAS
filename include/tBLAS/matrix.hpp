@@ -70,7 +70,8 @@ namespace tBLAS
         size_t m_rows;                           /**< Number of rows*/
         size_t m_cols;                           /**< Number of cols*/
 
-        friend std::ostream &operator<<(std::ostream &os, const Matrix<T, M, N> &p);
+        template <typename T_, size_t M_, size_t N_>
+        friend std::ostream &operator<<(std::ostream &os, const Matrix<T_, M_, N_> &p);
 
     protected:
         /**
@@ -122,7 +123,9 @@ namespace tBLAS
         alignas(64) std::vector<T> m_data;
         size_t m_rows;
         size_t m_cols;
-        friend std::ostream &operator<<(std::ostream &os, const MatrixX<T> &p);
+
+        template <typename T_>
+        friend std::ostream &operator<<(std::ostream &os, const MatrixX<T_> &p);
 
     protected:
         /**
@@ -265,12 +268,12 @@ namespace tBLAS
     template <typename T, size_t M, size_t N>
     typename Matrix<T, M, N>::const_iterator Matrix<T, M, N>::cend() const noexcept { return m_data.cend(); }
 
-    template <typename T, size_t M, size_t N>
-    std::ostream &operator<<(std::ostream &os, const tBLAS::Matrix<T, M, N> &A)
+    template <typename T_, size_t M_, size_t N_>
+    std::ostream &operator<<(std::ostream &os, const tBLAS::Matrix<T_, M_, N_> &A)
     {
-        for (int i = 0; i < M; i++)
+        for (int i = 0; i < A.rows(); i++)
         {
-            for (int j = 0; j < N; j++)
+            for (int j = 0; j < A.cols(); j++)
             {
                 os << A(i, j) << " ";
             }
@@ -380,8 +383,8 @@ namespace tBLAS
     template <typename T>
     typename MatrixX<T>::const_iterator MatrixX<T>::cend() const noexcept { return m_data.cend(); }
 
-    template <typename T>
-    std::ostream &operator<<(std::ostream &os, const MatrixX<T> &A)
+    template <typename T_>
+    std::ostream &operator<<(std::ostream &os, const MatrixX<T_> &A)
     {
         for (int i = 0; i < A.rows(); i++)
         {

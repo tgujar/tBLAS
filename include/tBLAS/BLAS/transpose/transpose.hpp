@@ -1,7 +1,7 @@
 #ifndef TRANSPOSE_HPP
 #define TRANSPOSE_HPP
 
-#include "matrix.hpp"
+#include <tBLAS/matrix.hpp>
 #include "./kernels/xl_mat.hpp"
 #include "./kernels/sm_mat.hpp"
 

@@ -1,7 +1,7 @@
 #ifndef TBLAS_UTILS_H
 #define TBLAS_UTILS_H
 
-#include "matrix.hpp"
+#include <tBLAS/matrix.hpp>
 #include <array>
 #include <vector>
 #include <utility>
