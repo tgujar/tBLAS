@@ -14,7 +14,7 @@
 #include "../helpers.hpp"
 
 const std::array<int, 9> powers_of_2 = {2, 4, 8, 16, 32, 64, 128, 256, 512};
-const std::array<int, 2> large_powers_of_2 = {2048, 4096};
+const std::array<int, 2> large_powers_of_2 = {1024, 2048};
 
 namespace tBLAS_test
 {
@@ -68,7 +68,7 @@ namespace tBLAS_test
                 test_title << "[" << m << "x" << m << "]";
                 BENCHMARK(test_title.str())
                 {
-                    return tBLAS::transpose(tA);
+                    return tBLAS::transpose(tA, tBLAS::BLAS::transpose_kernel::sm);
                 };
             }
         }
@@ -84,7 +84,7 @@ namespace tBLAS_test
                 test_title << "[" << m << "x" << m << "]";
                 BENCHMARK(test_title.str())
                 {
-                    return tBLAS::transpose(tA);
+                    return tBLAS::transpose(tA, tBLAS::BLAS::transpose_kernel::xl);
                 };
             }
         }

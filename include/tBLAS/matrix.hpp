@@ -271,9 +271,9 @@ namespace tBLAS
     template <typename T_, size_t M_, size_t N_>
     std::ostream &operator<<(std::ostream &os, const tBLAS::Matrix<T_, M_, N_> &A)
     {
-        for (int i = 0; i < A.rows(); i++)
+        for (size_t i = 0; i < A.rows(); i++)
         {
-            for (int j = 0; j < A.cols(); j++)
+            for (size_t j = 0; j < A.cols(); j++)
             {
                 os << A(i, j) << " ";
             }
@@ -386,9 +386,9 @@ namespace tBLAS
     template <typename T_>
     std::ostream &operator<<(std::ostream &os, const MatrixX<T_> &A)
     {
-        for (int i = 0; i < A.rows(); i++)
+        for (size_t i = 0; i < A.rows(); i++)
         {
-            for (int j = 0; j < A.cols(); j++)
+            for (size_t j = 0; j < A.cols(); j++)
             {
                 os << A(i, j) << " ";
             }

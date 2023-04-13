@@ -47,8 +47,6 @@ namespace tBLAS_test
 
     template <typename T, typename D, typename S, typename Container>
     static void compare_FP_2D(const Container &exp, const tBLAS::MatrixBase<T, D, S> &ip);
-    // template <typename T>
-    // static void compare_FP_2D(const std::vector<std::vector<T>> &exp, const std::vector<std::vector<T>> &ip);
 
     /**
      * @brief Compare two 2D matrices
@@ -58,7 +56,6 @@ namespace tBLAS_test
      */
     template <typename T, typename D, typename S, typename Container>
     static void compare_INT_2D(const Container &exp, const tBLAS::MatrixBase<T, D, S> &ip);
-    // static void compare_INT_2D(const std::vector<std::vector<int>> &exp, const std::vector<std::vector<int>> &ip);
 
     /* ----------------------------- Implementation ----------------------------- */
     template <typename T>
@@ -69,9 +66,9 @@ namespace tBLAS_test
         std::random_device rd;  // Only used once to initialise (seed) engine
         std::mt19937 rng(rd()); // Random-number engine used (Mersenne-Twister in this case)
         std::uniform_int_distribution<int> uni(min, max);
-        for (int i = 0; i < rows; ++i)
+        for (size_t i = 0; i < rows; ++i)
         {
-            for (int j = 0; j < cols; j++)
+            for (size_t j = 0; j < cols; j++)
             {
                 R[i][j] = uni(rng);
             }
@@ -83,9 +80,9 @@ namespace tBLAS_test
     static std::vector<std::vector<T>> identity(const size_t m)
     {
         std::vector<std::vector<T>> R(m, std::vector<T>(m));
-        for (int i = 0; i < m; ++i)
+        for (size_t i = 0; i < m; ++i)
         {
-            for (int j = 0; j < m; j++)
+            for (size_t j = 0; j < m; j++)
             {
                 if (i == j)
                 {
@@ -103,9 +100,9 @@ namespace tBLAS_test
     template <typename T, typename D, typename S, typename Container>
     static void compare_FP_2D(const Container &exp, const tBLAS::MatrixBase<T, D, S> &ip)
     {
-        for (int i = 0; i < exp.size(); ++i)
+        for (size_t i = 0; i < exp.size(); ++i)
         {
-            for (int j = 0; j < exp[0].size(); j++)
+            for (size_t j = 0; j < exp[0].size(); j++)
             {
                 REQUIRE_THAT(ip(i, j), Catch::Matchers::WithinRel(exp[i][j]));
             }
@@ -115,37 +112,14 @@ namespace tBLAS_test
     template <typename T, typename D, typename S, typename Container>
     static void compare_INT_2D(const Container &exp, const tBLAS::MatrixBase<T, D, S> &ip)
     {
-        for (int i = 0; i < exp.size(); ++i)
+        for (size_t i = 0; i < exp.size(); ++i)
         {
-            for (int j = 0; j < exp[0].size(); j++)
+            for (size_t j = 0; j < exp[0].size(); j++)
             {
                 REQUIRE(ip(i, j) == exp[i][j]);
             }
         }
     }
-
-    // template <typename T>
-    // static void compare_FP_2D(const std::vector<std::vector<T>> &exp, const std::vector<std::vector<T>> &ip)
-    // {
-    //     for (int i = 0; i < exp.size(); ++i)
-    //     {
-    //         for (int j = 0; j < exp[0].size(); j++)
-    //         {
-    //             REQUIRE_THAT(ip[i][j], Catch::Matchers::WithinRel(exp[i][j]));
-    //         }
-    //     }
-    // }
-
-    // static void compare_INT_2D(const std::vector<std::vector<int>> &exp, const std::vector<std::vector<int>> &ip)
-    // {
-    //     for (int i = 0; i < exp.size(); ++i)
-    //     {
-    //         for (int j = 0; j < exp[0].size(); j++)
-    //         {
-    //             REQUIRE(ip[i][j] == exp[i][j]);
-    //         }
-    //     }
-    // }
 
 }; // namespace tBLAS_test
 

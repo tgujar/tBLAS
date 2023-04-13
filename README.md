@@ -4,7 +4,7 @@ A header only multithreaded and cache-optimized linear algebra library
 
 ### TODO and future
 
-- **Optimized kernel for transpose of smaller matrices**: The current implementation supports fast transpose using tiling and multithreading for large matrices. However, for smaller matrices the setup of the matrices involves larger overhead. Smaller matrices can be optimized similar to larger one's, with different tiling parameters. The current implementation does a naive implementation for smaller matrices which might fit into L1 cache.
+- **Optimized kernel for transpose**: The current implementation supports fast transpose using tiling and multithreading for large matrices. However the size of the kernel needs to be tuned specifically for transpose. The lack of this leads to longer compute times than the naive version for transpose of large matrices.
 
 - **Tuning params**: Presently the parameters for block tiling the matrices are defined in `constants.hpp`. These values are not tuned and should be interpreted as sensible defaults. In an ideal scenario these would be tuned for a given CPU with known cache sizes. The current implementation can be improved by allowing configuration by passing preprocessor definitions so the user of the library can input the cache sizes and the block sizes can then be derived from these by using `constexpr` based on some heuristics.
 
@@ -27,6 +27,16 @@ From build directory run
 $ cmake ..
 $ make tests
 $ ctest
+```
+
+## Running benchmarks
+
+From build directory run.
+
+```
+$ cmake ..
+$ make bench
+$ ./tests/bench  --benchmark-samples=5
 ```
 
 ### Usage

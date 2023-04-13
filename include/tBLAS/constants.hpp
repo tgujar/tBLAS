@@ -7,7 +7,7 @@ namespace tBLAS
     const size_t KERNEL_MR = 8;
     const size_t KERNEL_NR = 4;
     const size_t KERNEL_NC = 64;
-    const size_t KERNEL_MC = 512;
+    const size_t KERNEL_MC = 8192;
     const size_t KERNEL_KC = 256;
 
     constexpr size_t VERTICAL_PANEL_ROWS = (KERNEL_MC / KERNEL_MR + 1) * KERNEL_MR;

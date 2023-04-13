@@ -28,11 +28,5 @@ namespace tBLAS_test
                 }
             }
         }
-        SECTION("PRINT")
-        {
-            using tBLAS::operator<<;
-            tBLAS::Matrix<int, 2, 4> A{{1, 2, 3, 4}, {5, 6, 7, 8}};
-            std::cout << A << std::endl;
-        }
     }
 }; // namespace tBLAS_test
