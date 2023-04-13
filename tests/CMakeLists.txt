@@ -11,7 +11,6 @@ add_executable(bench bench/bench.cpp)
 target_link_libraries(tests PRIVATE tBLAS Catch2::Catch2WithMain)
 target_link_libraries(bench PRIVATE tBLAS Catch2::Catch2WithMain)
 
-
 # Add tests to CTest
 include(CTest)
 include(Catch)
