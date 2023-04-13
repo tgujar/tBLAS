@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
+
 project(tBLAS VERSION 0.0.1
             DESCRIPTION "A header only library for high performance linear algebra"
             HOMEPAGE_URL "https://github.com/tgujar/tBLAS")
@@ -8,6 +9,8 @@ set(CMAKE_CXX_COMPILER g++)
 
 # Set the C++ standard to C++11
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set the optimization level and warning flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
